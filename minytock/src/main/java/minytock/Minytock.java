@@ -51,7 +51,7 @@ public class Minytock {
      */
     public static <I, T extends I> T prepare(T target, Class<I> targetInterface) {
     	try {
-    		return VisibilityAdapter.prepare(target, targetInterface);
+    		return DelegationHandlerImpl.getProxy(target, targetInterface);
     	} catch (DelegationException e) {
     		throw new RuntimeException(e);
     	}
@@ -127,7 +127,7 @@ public class Minytock {
 
     public static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface, boolean requireProxy) {
     	try {
-    		return VisibilityAdapter.delegate(target, targetInterface, requireProxy);
+    		return DelegationHandlerImpl.delegate(target, targetInterface, requireProxy);
     	} catch (DelegationException e) {
     		throw new RuntimeException(e);
     	}
@@ -138,7 +138,7 @@ public class Minytock {
      * {@link minytock.spring.MinytockPostProcessor MinytockPostProcessor}.
      */
     public static void cleanup() {
-        VisibilityAdapter.cleanup();
+    	DelegationHandlerImpl.cleanup();
     }
 
     public static void verify(Object proxy) {
