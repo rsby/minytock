@@ -3,6 +3,7 @@ package minytock;
 import minytock.delegate.*;
 import minytock.spy.Spy;
 import minytock.test.EmptyMockFactory;
+import minytock.test.Verifiable;
 
 /**
  * A sort of "static interface" to the Minytock delegation framework that can be imported into test classes
@@ -23,6 +24,8 @@ import minytock.test.EmptyMockFactory;
  * Minytock
  */
 public class Minytock {
+	
+	public static final DelegationHandlerProvider PROVIDER = new DelegationHandlerProviderImpl(new ConcurrentDelegationCache());
 
     /**
      * get a delegatable proxy of the given object.  this can be done automatically for all autowired beans
@@ -50,7 +53,7 @@ public class Minytock {
      */
     public static <I, T extends I> T prepare(T target, Class<I> targetInterface) {
     	try {
-    		return DelegationHandlerProvider.getHandler(target, targetInterface, false).getProxy();
+    		return PROVIDER.getHandler(target, targetInterface, false).getProxy();
     	} catch (DelegationException e) {
     		throw new RuntimeException(e);
     	}
@@ -126,7 +129,7 @@ public class Minytock {
 
     public static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface, boolean requireProxy) {
     	try {
-    		return DelegationHandlerProvider.getHandler(target, targetInterface, requireProxy);
+    		return PROVIDER.getHandler(target, targetInterface, requireProxy);
     	} catch (DelegationException e) {
     		throw new RuntimeException(e);
     	}
@@ -137,7 +140,7 @@ public class Minytock {
      * {@link minytock.spring.MinytockPostProcessor MinytockPostProcessor}.
      */
     public static void cleanup() {
-    	DelegationHandlerProvider.clearCache();
+    	PROVIDER.clearCache();
     }
 
     public static void verify(Object proxy) {

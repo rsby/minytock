@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 
 import minytock.delegate.InvocationAware;
 import minytock.delegate.TargetAware;
-import minytock.delegate.Verifiable;
 
 /**
  * User: reesbyars

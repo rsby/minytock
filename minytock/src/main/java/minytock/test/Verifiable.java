@@ -1,4 +1,4 @@
-package minytock.delegate;
+package minytock.test;
 
 public interface Verifiable {
 	void verify();
