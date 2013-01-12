@@ -29,12 +29,22 @@ public abstract class AbstractDelegationInterceptor<T> implements DelegationInte
 
     @Override
     public void setDelegate(Object delegate) {
+    	
+    	
+    	
         Class<?> newDelegateClass = delegate.getClass();
+        
+        if (delegate.equals(this.delegate)) {
+        	this.delegate = this.realObject;  //here, if someone tries delegate(bean).to(bean) we set the real object as the delegate to avoid stackoverflow
+        	return;
+    	}
+        
         if (newDelegateClass != this.delegateClass) {
             this.delegateClass = newDelegateClass;
             this.delegateMethodCache.clear();
             this.delegateMethodCache = new HashMap<Method, Method>();
         }
+        
         this.delegate = delegate;
     }
 
