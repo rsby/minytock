@@ -24,7 +24,6 @@ public class MinytockTest {
 	@Before
 	public void setUp() {
 		bean = new TestBean();
-		//TODO handle delegating empty mocks to themselves
 	}
 	
 	@Test
@@ -36,6 +35,7 @@ public class MinytockTest {
 			
 			@Verify(calls = 2)
 			void test(String msg) {
+				this.realObject.test(msg);
 				assertEquals(expected, msg);
 			}
 			
