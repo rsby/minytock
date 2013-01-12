@@ -38,6 +38,13 @@ public interface DelegationHandler<T> {
     public T getRealObject();
 
     public Object getDelegate();
+    
+    static class Factory<T> {
+    
+    	public static <T> DelegationHandler<T> create(DelegationInterceptor<T> interceptor) {
+    		return new DelegationHandlerImpl<T>(interceptor);
+    	}
+    }
 
 
 }

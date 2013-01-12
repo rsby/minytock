@@ -50,7 +50,7 @@ public class Minytock {
      */
     public static <I, T extends I> T prepare(T target, Class<I> targetInterface) {
     	try {
-    		return DelegationHandlerImpl.getProxy(target, targetInterface);
+    		return DelegationHandlerProvider.getHandler(target, targetInterface, false).getProxy();
     	} catch (DelegationException e) {
     		throw new RuntimeException(e);
     	}
@@ -126,7 +126,7 @@ public class Minytock {
 
     public static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface, boolean requireProxy) {
     	try {
-    		return DelegationHandlerImpl.delegate(target, targetInterface, requireProxy);
+    		return DelegationHandlerProvider.getHandler(target, targetInterface, requireProxy);
     	} catch (DelegationException e) {
     		throw new RuntimeException(e);
     	}
@@ -137,7 +137,7 @@ public class Minytock {
      * {@link minytock.spring.MinytockPostProcessor MinytockPostProcessor}.
      */
     public static void cleanup() {
-    	DelegationHandlerImpl.cleanup();
+    	DelegationHandlerProvider.clearCache();
     }
 
     public static void verify(Object proxy) {
