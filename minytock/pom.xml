@@ -8,7 +8,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	
 	<name>minytock</name>
-	<description> A tiny, general-purpose delegating mock framework with special support for bean-mocking in Spring integration tests</description>
+	<description>an ultra-tiny yet rich mocking toolkit for java</description>
 
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
