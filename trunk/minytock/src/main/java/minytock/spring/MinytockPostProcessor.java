@@ -20,7 +20,7 @@ import org.springframework.util.StringUtils;
  * <p/>
  * Example usage:
  * <pre>
- * &lt;bean class=&quot;minytock.SpringMocksyPostProcessor&quot;&gt;
+ * &lt;bean class=&quot;minytock.spring.MinytockPostProcessor&quot;&gt;
  *    &lt;property name=&quot;proxyPackages&quot; value=&quot;orb.byars&quot;/&gt;
  *    &lt;property name=&quot;lazyInitPackages&quot; value=&quot;org.byars.foo, org.byars.bar&quot;/&gt;
  *    &lt;property name=&quot;emptyMockClasses&quot; value=&quot;org.byars.SomeService, org.byars.SomeOtherService&quot;/&gt;
@@ -94,7 +94,7 @@ public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPost
             try {
                 Class<?> beanClass = Class.forName(className);
                 FactoryBean<?> factoryBean = MinytockFactoryBean.getFor(beanClass);
-                String name = className + "$MOCKSY_PROXY$";
+                String name = className + "$MINYTOCK_PROXY$";
                 beanFactory.registerSingleton(name, factoryBean);
             } catch (ClassNotFoundException e) {
                 LOG.error("Could not obtain class " + className + ".  Empty mocking cannot be performed.  Message:  " + e.getMessage());

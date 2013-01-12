@@ -49,8 +49,6 @@ public class MinytockTest {
 		
 		verify(bean);
 		
-		remove(bean);
-		
 		bean.test(expected);
 		
 		verify(bean);
