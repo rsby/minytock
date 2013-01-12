@@ -3,7 +3,6 @@ package minytock;
 import minytock.delegate.*;
 import minytock.spy.Spy;
 import minytock.test.EmptyMockFactory;
-import minytock.test.Mock;
 
 /**
  * A sort of "static interface" to the Minytock delegation framework that can be imported into test classes
@@ -143,8 +142,8 @@ public class Minytock {
 
     public static void verify(Object proxy) {
         Object delegate = delegate(proxy).getDelegate();
-        if (delegate instanceof Mock) {
-            ((Mock<?>) delegate).verify();
+        if (delegate instanceof Verifiable) {
+            ((Verifiable) delegate).verify();
         }
     }
 

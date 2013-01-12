@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import minytock.delegate.InvocationAware;
+import minytock.delegate.TargetAware;
+import minytock.delegate.Verifiable;
 
 /**
  * User: reesbyars
@@ -14,10 +16,11 @@ import minytock.delegate.InvocationAware;
  * <p/>
  * Mock
  */
-public abstract class Mock<T> implements InvocationAware {
+public abstract class Mock<T> implements InvocationAware, TargetAware<T>, Verifiable {
 
     private Map<Method, Integer> invocationMap = new HashMap<Method, Integer>();
     private Map<Method, Verify> verifiableMethods = new HashMap<Method, Verify>();
+    protected T realObject;
     
     public Mock() {
     	for (Method method : this.getClass().getDeclaredMethods()) {
@@ -26,6 +29,11 @@ public abstract class Mock<T> implements InvocationAware {
             	verifiableMethods.put(method, verify);
             }
     	}
+    }
+    
+    @Override
+    public void setTarget(T target) {
+    	this.realObject = target;
     }
 
     @Override
@@ -40,6 +48,7 @@ public abstract class Mock<T> implements InvocationAware {
     /**
      * verifies the  method calls as expected according to the @Verify annotation.  The call counts are reset.
      */
+    @Override
     public void verify() {
     	
         for (Entry<Method, Verify> entry : verifiableMethods.entrySet()) {
@@ -78,7 +87,7 @@ public abstract class Mock<T> implements InvocationAware {
     	if (!expression) throw new AssertionError(message);
     }
     
-    public static class VerificationException extends Exception {
+    static class VerificationException extends Exception {
 		private static final long serialVersionUID = 2039031849374188573L;
 		private VerificationException(String message) {
 			super(message);
