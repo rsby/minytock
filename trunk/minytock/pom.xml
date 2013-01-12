@@ -7,10 +7,62 @@
 	<artifactId>minytock</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	
-	<name>Mocksy</name>
+	<name>minytock</name>
 	<description> A tiny, general-purpose delegating mock framework with special support for bean-mocking in Spring integration tests</description>
 
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+
+	<url>http://code.google.com/p/minytock/</url>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	
+	<developers>
+		<developer>
+			<name>Rees Byars</name>
+			<roles>
+				<role>
+					Creator
+				</role>
+				<role>
+					Lead Designer
+				</role>
+				<role>
+					Lead Engineer
+				</role>
+				<role>
+					Lead Coffee Brewer
+				</role>
+			</roles>
+			<timezone>-4</timezone>
+			<email>reesDOTbyarsATG00GLEMAIL</email>
+		</developer>
+	</developers>
+	
+	<inceptionYear>2013</inceptionYear>
+	
+	<issueManagement>
+		<system>Google Code</system>
+		<url>http://code.google.com/p/minytock/issues/</url>
+	</issueManagement>
+
+	<scm>
+		<developerConnection>scm:svn:https://minytock.googlecode.com/svn/trunk/minytock</developerConnection>
+		<connection>scm:svn:http://minytock.googlecode.com/svn/trunk/minytock</connection>
+		<url>http://minytock.googlecode.com/svn/trunk/minytock</url>
+	</scm>
+
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>3.1.1.RELEASE</spring.version>
 	</properties>
 
@@ -57,6 +109,57 @@
 		</dependency>
 
 	</dependencies>
+	
+	<profiles>
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.4</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<mavenExecutorId>forked-path</mavenExecutorId>
+					<useReleaseProfile>false</useReleaseProfile>
+					<arguments>-Psonatype-oss-release</arguments>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
