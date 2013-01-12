@@ -47,11 +47,11 @@ public class DelegationHandlerImpl<T> implements DelegationHandler<T> {
         return this.interceptor.getDelegate();
     }
 
-    protected static <I, T extends I> T getProxy(T target, Class<I> targetInterface) throws DelegationException {
+    public static <I, T extends I> T getProxy(T target, Class<I> targetInterface) throws DelegationException {
         return resolveHandler(target, targetInterface).getProxy();
     }
 
-    protected static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface, boolean requireProxy) throws DelegationException {
+    public static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface, boolean requireProxy) throws DelegationException {
 
         if (requireProxy && !ProxyUtil.isProxyClass(target.getClass())) {
         	throw new DelegationException("The target is not a proxy.  A proxy must first be obtained using prepare(target) and then passed as the target.");
@@ -61,7 +61,7 @@ public class DelegationHandlerImpl<T> implements DelegationHandler<T> {
 
     }
 
-    protected static void cleanup() {
+    public static void cleanup() {
         handlerCache.clear();
     }
 
