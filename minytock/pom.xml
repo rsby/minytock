@@ -8,7 +8,7 @@
 	<version>0.0.1-BETA-SNAPSHOT</version>
 	
 	<name>minytock</name>
-	<description>an ultra-tiny yet rich mocking toolkit for java</description>
+	<description>an ultra-tiny yet rich mocking toolkit for java integration tests</description>
 
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
@@ -32,15 +32,6 @@
 			<roles>
 				<role>
 					Creator
-				</role>
-				<role>
-					Lead Designer
-				</role>
-				<role>
-					Lead Engineer
-				</role>
-				<role>
-					Lead Coffee Brewer
 				</role>
 			</roles>
 			<timezone>-4</timezone>

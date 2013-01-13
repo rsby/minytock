@@ -4,7 +4,7 @@ import minytock.util.ProxyUtil;
 
 public class DelegationHandlerProviderImpl implements DelegationHandlerProvider {
 	
-	private DelegationHandlerCache cache = new ConcurrentDelegationCache(); 
+	private DelegationHandlerCache cache = new DefaultDelegationCache(); 
 
 	public DelegationHandlerProviderImpl(DelegationHandlerCache cache) {
 		this.cache = cache;
