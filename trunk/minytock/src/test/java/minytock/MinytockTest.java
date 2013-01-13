@@ -40,7 +40,7 @@ public class MinytockTest {
 			
 		};
 		
-		delegate(bean).to(mock);
+		delegate(bean).to(bean);
 		
 		bean.test(expected);
 		

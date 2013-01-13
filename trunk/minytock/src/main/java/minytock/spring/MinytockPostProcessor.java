@@ -21,7 +21,7 @@ import org.springframework.util.StringUtils;
  * Example usage:
  * <pre>
  * &lt;bean class=&quot;minytock.spring.MinytockPostProcessor&quot;&gt;
- *    &lt;property name=&quot;proxyPackages&quot; value=&quot;orb.byars&quot;/&gt;
+ *    &lt;property name=&quot;mockablePackages&quot; value=&quot;orb.byars&quot;/&gt;
  *    &lt;property name=&quot;lazyInitPackages&quot; value=&quot;org.byars.foo, org.byars.bar&quot;/&gt;
  *    &lt;property name=&quot;emptyMockClasses&quot; value=&quot;org.byars.SomeService, org.byars.SomeOtherService&quot;/&gt;
  * &lt;/bean&gt;
@@ -37,12 +37,12 @@ public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPost
 
     private static final Logger LOG = LoggerFactory.getLogger(MinytockPostProcessor.class);
 
-    String[] preparePackages = {"NONE"};
+    String[] mockablePackages = {"NONE"};
     String[] lazyInitPackages = {"NONE"};
     String[] emptyMockClasses = {};
 
-    public void setpreparePackages(String preparePackages) {
-        this.preparePackages = StringUtils.trimAllWhitespace(preparePackages).split(",");
+    public void setMockablePackages(String mockablePackages) {
+        this.mockablePackages = StringUtils.trimAllWhitespace(mockablePackages).split(",");
     }
 
     public void setLazyInitPackages(String lazyInitPackages) {
@@ -62,7 +62,7 @@ public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPost
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 
         boolean doProxy = false;
-        for (String pack : preparePackages) {
+        for (String pack : mockablePackages) {
             if (bean.getClass().getName().startsWith(pack) && !beanName.endsWith("Test")) {
                 doProxy = true;
                 break;
