@@ -15,7 +15,7 @@ public class MinytockTestExecutionListener extends DependencyInjectionTestExecut
 	@SuppressWarnings("unchecked")
 	@Override
 	public void beforeTestClass(TestContext testContext) throws Exception {
-		Minytock.PROVIDER.setCache(new LocalDelegationCache());
+		Minytock.getProvider().setCache(new LocalDelegationCache());
 		assistant = new ReadyAssistant(testContext.getTestClass(), Ready.class);
 		super.beforeTestClass(testContext);
 	}
@@ -35,7 +35,7 @@ public class MinytockTestExecutionListener extends DependencyInjectionTestExecut
 	@Override
 	public void afterTestMethod(TestContext testContext) throws Exception {
 		super.afterTestMethod(testContext);
-		Minytock.cleanup();
+		Minytock.clearAll();
 	}
 
 }

@@ -25,7 +25,7 @@ import minytock.test.Verifiable;
  */
 public class Minytock {
 	
-	public static final DelegationHandlerProvider PROVIDER = new DelegationHandlerProviderImpl(new ConcurrentDelegationCache());
+	private static final DelegationHandlerProvider PROVIDER = new DelegationHandlerProviderImpl(new ConcurrentDelegationCache());
 
     /**
      * get a delegatable proxy of the given object.  this can be done automatically for all autowired beans
@@ -51,7 +51,7 @@ public class Minytock {
      * @return
      * @throws DelegationException
      */
-    public static <I, T extends I> T prepare(T target, Class<I> targetInterface) {
+    private static <I, T extends I> T prepare(T target, Class<I> targetInterface) {
     	try {
     		return PROVIDER.getHandler(target, targetInterface, false).getProxy();
     	} catch (DelegationException e) {
@@ -99,18 +99,10 @@ public class Minytock {
     }
 
     /**
-     * remove the current delegate for the given proxy
+     * remove the current delegate for the given proxies
      *
-     * @param target
-     * @param <T>
-     * @return
-     * @throws DelegationException
      */
-    public static <T> T remove(T target) {
-    	return delegate(target, null).remove();
-    }
-    
-    public static void removeAll(Object ... targets) {
+    public static void remove(Object ... targets) {
     	for (Object target : targets) {
     		delegate(target, null).remove();
     	}
@@ -128,12 +120,12 @@ public class Minytock {
     	return delegate(target, null, false).getRealObject();
     }
 
-    public static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface) {
+    private static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface) {
     	return delegate(target, targetInterface, true); //true to enforce good practice
 
     }
 
-    public static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface, boolean requireProxy) {
+    private static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface, boolean requireProxy) {
     	try {
     		return PROVIDER.getHandler(target, targetInterface, requireProxy);
     	} catch (DelegationException e) {
@@ -145,7 +137,7 @@ public class Minytock {
      * cleans up delegation resources to reduce memory imprint.  automatically called after each test class from
      * {@link minytock.spring.MinytockPostProcessor MinytockPostProcessor}.
      */
-    public static void cleanup() {
+    public static void clearAll() {
     	PROVIDER.clearCache();
     }
 
@@ -172,6 +164,10 @@ public class Minytock {
 
     public static <T> Spy.Hijacker<T> get(Class<T> classToGet) {
         return Spy.get(classToGet);
+    }
+    
+    public static DelegationHandlerProvider getProvider() {
+    	return PROVIDER;
     }
 
 }
