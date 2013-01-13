@@ -28,11 +28,11 @@ public class DelegationHandlerProviderImpl implements DelegationHandlerProvider 
         }
 
         @SuppressWarnings("unchecked")
-        DelegationHandler<T> handler = (DelegationHandlerImpl<T>) cache.get(target);
+        DelegationHandler<T> handler = (DelegationHandler<T>) cache.get(target);
 
         if (handler == null) {
 
-            handler = DelegationHandler.Factory.create(DelegationInterceptor.Factory.create(target, targetInterface));
+            handler = DelegationHandler.Factory.create(target, targetInterface);
 
             cache.put(target, handler);
 
