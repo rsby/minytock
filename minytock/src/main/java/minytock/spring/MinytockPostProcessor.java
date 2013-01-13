@@ -37,7 +37,7 @@ public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPost
 
     private static final Logger LOG = LoggerFactory.getLogger(MinytockPostProcessor.class);
 
-    String[] mockablePackages = {"NONE"};
+    String[] mockablePackages = {""};
     String[] lazyInitPackages = {"NONE"};
     String[] emptyMockClasses = {};
 

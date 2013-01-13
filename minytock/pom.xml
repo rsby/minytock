@@ -5,7 +5,7 @@
 	
 	<groupId>com.googlecode.minytock</groupId>
 	<artifactId>minytock</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1-BETA-SNAPSHOT</version>
 	
 	<name>minytock</name>
 	<description>an ultra-tiny yet rich mocking toolkit for java</description>
@@ -155,6 +155,7 @@
 	</profiles>
 
 	<build>
+		<finalName>${project.artifactId}-${project.version}-${maven.build.timestamp}</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
