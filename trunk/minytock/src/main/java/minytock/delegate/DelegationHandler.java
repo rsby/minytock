@@ -41,8 +41,8 @@ public interface DelegationHandler<T> {
     
     static class Factory<T> {
     
-    	public static <T> DelegationHandler<T> create(DelegationInterceptor<T> interceptor) {
-    		return new DelegationHandlerImpl<T>(interceptor);
+    	public static <I, T extends I> DelegationHandler<T> create(T target, Class<I> targetInterface) throws DelegationException {
+    		return new DelegationHandlerImpl<T>(DelegationInterceptor.Factory.create(target, targetInterface));
     	}
     }
 
