@@ -9,8 +9,6 @@
     
     <bean class="minytock.SomeOtherService"/>
     
-    <bean class="minytock.spring.MinytockPostProcessor">
-    	<property name="mockablePackages" value="minytock"/>
-    </bean>
+    <bean class="minytock.spring.MinytockPostProcessor"/>
 	
 </beans>
