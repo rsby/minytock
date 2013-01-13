@@ -14,7 +14,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * The Minytock interface to the Spring IoC layer.  Packages and classes can be declared for automatic
- * prepareing of Spring-managed beans (makes them ready for using {@link minytock.Minytock#delegate(Object)},
+ * preparing of Spring-managed beans (makes them ready for using {@link minytock.Minytock#delegate(Object)},
  * lazy-initialization of beans, and auto-empty-mocking of Spring beans (useful when
  * all you have available is an interface).
  * <p/>

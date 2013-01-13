@@ -1,6 +1,6 @@
 package minytock;
 
-import minytock.spring.MinytockTestExecutionListener;
+import minytock.spring.MinytockSpringRunner;
 import minytock.test.Mock;
 import minytock.test.Ready;
 import minytock.test.Verify;
@@ -9,14 +9,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static minytock.Minytock.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(MinytockSpringRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
-@TestExecutionListeners(MinytockTestExecutionListener.class)
 public class ExampleTest {
 	
 	@Autowired
@@ -42,9 +39,7 @@ public class ExampleTest {
 		
 		serviceUnderTest.doSomething();
 		
-		verify(serviceToMock, beanToMock);
-		
-		remove(serviceToMock, beanToMock);
+		verify(serviceToMock);
 	}
 
 }
