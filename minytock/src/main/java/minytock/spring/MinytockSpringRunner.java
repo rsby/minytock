@@ -1,6 +1,7 @@
 package minytock.spring;
 
 import minytock.Minytock;
+import minytock.delegate.LocalDelegationCache;
 import minytock.junit.AfterBefores;
 import minytock.test.ReadyAssistant;
 import minytock.test.Ready;
@@ -9,7 +10,6 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 public class MinytockSpringRunner extends SpringJUnit4ClassRunner {
@@ -19,7 +19,8 @@ public class MinytockSpringRunner extends SpringJUnit4ClassRunner {
 	@SuppressWarnings("unchecked")
 	public MinytockSpringRunner(Class<?> clazz) throws InitializationError {
 		super(clazz);
-		assistant = new ReadyAssistant(clazz, Ready.class, Autowired.class);
+		Minytock.PROVIDER.setCache(new LocalDelegationCache());
+		assistant = new ReadyAssistant(clazz, Ready.class);
 	}
 	
 	@Override 

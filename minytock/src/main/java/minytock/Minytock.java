@@ -109,6 +109,12 @@ public class Minytock {
     public static <T> T remove(T target) {
     	return delegate(target, null).remove();
     }
+    
+    public static void removeAll(Object ... targets) {
+    	for (Object target : targets) {
+    		delegate(target, null).remove();
+    	}
+    }
 
     /**
      * gets the real object from behind a proxy
@@ -143,11 +149,13 @@ public class Minytock {
     	PROVIDER.clearCache();
     }
 
-    public static void verify(Object proxy) {
-        Object delegate = delegate(proxy).getDelegate();
-        if (delegate instanceof Verifiable) {
-            ((Verifiable) delegate).verify();
-        }
+    public static void verify(Object ... proxies) {
+    	for (Object proxy : proxies) {
+    		Object delegate = delegate(proxy).getDelegate();
+            if (delegate instanceof Verifiable) {
+                ((Verifiable) delegate).verify();
+            }
+    	}
     }
 
     public static <T> T newEmptyMock(Class<T> classToMock) {
