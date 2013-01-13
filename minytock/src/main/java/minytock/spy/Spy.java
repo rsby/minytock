@@ -15,7 +15,7 @@ import java.lang.reflect.Field;
 public class Spy<T> {
 
     public static <T> Infiltrator set(T value) throws DelegationException {
-        return new Infiltrator(Minytock.real(value));
+        return new Infiltrator(value);
     }
 
     public static <T> Hijacker<T> get(Class<T> classToGet) {
