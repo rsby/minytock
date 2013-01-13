@@ -16,7 +16,7 @@
 	</category>
 	
 	<category name="org.springframework">
-		<priority value="warn" />
+		<priority value="info" />
 		<appender-ref ref="CONSOLE" />
 	</category>
 

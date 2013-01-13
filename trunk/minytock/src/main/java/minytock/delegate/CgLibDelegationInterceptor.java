@@ -73,7 +73,7 @@ public class CgLibDelegationInterceptor<T> extends AbstractDelegationInterceptor
         } else if (!Modifier.isFinal(target.getClass().getModifiers())) {
             interceptor.proxy = (T) Enhancer.create(target.getClass(), interceptor);
         } else {
-            LOG.warn("Class is final, cannot proxy directly.  Proxying super class and implementing all interfaces.  Will work for some cases.  Why a final class?!?!");
+            LOG.warn(target.getClass() + " is final, cannot proxy directly.  Proxying super class and implementing all interfaces.  Will work for some cases.  Why a final class?!?!");
             interceptor.proxy = (T) Enhancer.create(target.getClass().getSuperclass(), target.getClass().getInterfaces(), interceptor);
         }
         return interceptor;
