@@ -19,14 +19,14 @@ public class MinytockSpringRunner extends SpringJUnit4ClassRunner {
 	@SuppressWarnings("unchecked")
 	public MinytockSpringRunner(Class<?> clazz) throws InitializationError {
 		super(clazz);
-		Minytock.PROVIDER.setCache(new LocalDelegationCache());
+		Minytock.getProvider().setCache(new LocalDelegationCache());
 		assistant = new ReadyAssistant(clazz, Ready.class);
 	}
 	
 	@Override 
 	public void run(RunNotifier rn) {
 		super.run(rn);
-		Minytock.cleanup();
+		Minytock.clearAll();
 	}
 	
 	@Override

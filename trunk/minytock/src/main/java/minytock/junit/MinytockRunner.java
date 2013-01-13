@@ -19,13 +19,13 @@ public class MinytockRunner extends BlockJUnit4ClassRunner {
 	public MinytockRunner(Class<?> clazz) throws InitializationError {
 		super(clazz);
 		assistant = new ReadyAssistant(clazz, Ready.class);
-		Minytock.PROVIDER.setCache(new LocalDelegationCache());
+		Minytock.getProvider().setCache(new LocalDelegationCache());
 	}
 	
 	@Override 
 	public void run(RunNotifier rn) {
 		super.run(rn);
-		Minytock.cleanup();
+		Minytock.clearAll();
 	}
 	
 	@Override

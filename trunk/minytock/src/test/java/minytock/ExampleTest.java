@@ -32,17 +32,19 @@ public class ExampleTest {
 	public void testDoSomething() {
 		
 		delegate(serviceToMock).to(new Mock<SomeOtherService>() {
-			@Verify(calls = 1)
-			public SomeBean getSomething() {
+			
+			@Verify
+			SomeBean getSomething() {
 				return beanToMock;
 			}
+			
 		});
 		
 		serviceUnderTest.doSomething();
 		
 		verify(serviceToMock, beanToMock);
 		
-		removeAll(serviceToMock, beanToMock);
+		remove(serviceToMock, beanToMock);
 	}
 
 }

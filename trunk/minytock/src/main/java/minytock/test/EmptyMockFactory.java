@@ -1,6 +1,7 @@
 package minytock.test;
 
 import minytock.Minytock;
+import minytock.delegate.DelegationException;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -19,7 +20,11 @@ public class EmptyMockFactory {
 
     @SuppressWarnings("unchecked")
     public static <T> T create(Class<T> classToMock) {
-        return Minytock.prepare((T) getEmptyProxy(classToMock), classToMock);
+        try {
+			return Minytock.getProvider().getHandler((T) getEmptyProxy(classToMock), classToMock, false).getProxy();
+		} catch (DelegationException e) {
+    		throw new RuntimeException(e);
+    	}
     }
     
     private static Object getEmptyProxy(Class<?> classToMock) {
