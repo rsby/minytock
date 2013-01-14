@@ -1,8 +1,8 @@
 package minytock.delegate;
 
 /**
- * The primary interface around which the delegation framework is built.  Exposes useful methods
- * while allowing implementations to hide their details.
+ * A sort of bridge interface that hides the interceptor details from users and the 
+ * rest of the framework.
  *
  * User: reesbyars
  * Date: 9/10/12
@@ -39,11 +39,12 @@ public interface DelegationHandler<T> {
 
     /**
      * 
-     * @return
+     * @return the current delegate, or the target/real object if there is no current delegate
      */
     public Object getDelegate();
     
     /**
+     * a static factory that can be used to create handlers
      * 
      * @author reesbyars
      *
@@ -52,6 +53,7 @@ public interface DelegationHandler<T> {
     static class Factory<T> {
     
     	/**
+    	 * creates a delegation handler
     	 * 
     	 * @param target
     	 * @param targetInterface

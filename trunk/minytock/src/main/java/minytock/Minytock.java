@@ -74,14 +74,6 @@ public class Minytock {
     }
 
     /**
-     * remove the current delegate for the given proxies
-     *
-     */
-    public static void remove(Object ... targets) {
-    	provider.removeDelegates(targets);
-    }
-
-    /**
      * gets the real object from behind a proxy
      *
      * @param target
@@ -90,6 +82,14 @@ public class Minytock {
      */
     public static <T> T real(T target) {
     	return provider.getReal(target);
+    }
+    
+    /**
+     * remove the current delegate for the given proxies
+     *
+     */
+    public static void remove(Object ... targets) {
+    	provider.removeDelegates(targets);
     }
 
     /**
@@ -119,6 +119,10 @@ public class Minytock {
         return EmptyMockFactory.create(classToMock);
     }
 
+    /**
+     * @param value a value to set
+     * @return a {@link Spy.Infiltrator} that can set the given value on a target
+     */
     public static <T> Spy.Infiltrator set(T value) {
     	try {
     		return Spy.set(value);
@@ -127,6 +131,10 @@ public class Minytock {
     	}
     }
 
+    /**
+     * @param classToGet the class of the field to retrieve
+     * @return a {@link Spy.Hijacker} that can retrieve the field from a target
+     */
     public static <T> Spy.Hijacker<T> get(Class<T> classToGet) {
         return Spy.get(classToGet);
     }

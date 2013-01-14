@@ -1,6 +1,8 @@
 package minytock.delegate;
 
 /**
+ * basic implementation of the handler interface
+ * 
  * User: reesbyars
  * Date: 9/11/12
  * Time: 9:37 PM

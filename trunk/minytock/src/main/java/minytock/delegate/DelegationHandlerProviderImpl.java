@@ -2,6 +2,13 @@ package minytock.delegate;
 
 import minytock.util.ProxyUtil;
 
+/**
+ * 
+ * implementation of the handler provider
+ * 
+ * @author reesbyars
+ *
+ */
 public class DelegationHandlerProviderImpl implements DelegationHandlerProvider {
 	
 	private DelegationHandlerCache cache = new DefaultDelegationHandlerCache(); 

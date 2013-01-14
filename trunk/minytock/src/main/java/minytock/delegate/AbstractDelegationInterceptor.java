@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * User: reesbyars
- * Date: 9/11/12
- * Time: 9:51 PM
- * <p/>
- * AbstractDelegationInterceptor
+ * an abstract delegation interceptor that does everything but intercept
+ * 
+ * @author reesbyars
+ *
+ * @param <T> the type of the target object and the proxy
  */
 public abstract class AbstractDelegationInterceptor<T> implements DelegationInterceptor<T> {
 
