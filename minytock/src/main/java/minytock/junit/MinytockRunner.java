@@ -1,6 +1,7 @@
 package minytock.junit;
 
 import minytock.Minytock;
+import minytock.delegate.DelegationHandlerProviderImpl;
 import minytock.delegate.ThreadLocalDelegationHandlerCache;
 import minytock.test.ReadyAssistant;
 import minytock.test.Ready;
@@ -19,13 +20,13 @@ public class MinytockRunner extends BlockJUnit4ClassRunner {
 	public MinytockRunner(Class<?> clazz) throws InitializationError {
 		super(clazz);
 		assistant = new ReadyAssistant(clazz, Ready.class);
-		Minytock.getProvider().setCache(new ThreadLocalDelegationHandlerCache());
+		Minytock.provider = new DelegationHandlerProviderImpl(new ThreadLocalDelegationHandlerCache());
 	}
 	
 	@Override 
 	public void run(RunNotifier rn) {
 		super.run(rn);
-		Minytock.clearAll();
+		Minytock.clearDelegates();
 	}
 	
 	@Override

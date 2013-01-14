@@ -12,6 +12,10 @@ import org.slf4j.LoggerFactory;
  */
 public interface DelegationInterceptor<T> {
 
+	/**
+	 * 
+	 * @param delegate
+	 */
     void setDelegate(Object delegate);
 
     /**
@@ -20,10 +24,22 @@ public interface DelegationInterceptor<T> {
      */
     T removeDelegate();
 
+    /**
+     * 
+     * @return
+     */
     T getProxy();
 
+    /**
+     * 
+     * @return
+     */
     T getRealObject();
 
+    /**
+     * 
+     * @return
+     */
     Object getDelegate();
 
     /**

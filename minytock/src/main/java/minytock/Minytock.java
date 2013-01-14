@@ -20,7 +20,7 @@ import minytock.test.Verifiable;
  */
 public class Minytock {
 	
-	private static final DelegationHandlerProvider PROVIDER = new DelegationHandlerProviderImpl(new DefaultDelegationHandlerCache());
+	public static DelegationHandlerProvider provider = new DelegationHandlerProviderImpl(new DefaultDelegationHandlerCache());
 
     /**
      * get a delegatable proxy of the given object.  this can be done automatically for all autowired beans
@@ -32,21 +32,8 @@ public class Minytock {
      * @return
      */
     public static <T> T prepare(T target) {
-    	return prepare(target, null);
-    }
-
-    /**
-     * get a delegatable proxy of the given object.
-     *
-     * @param target
-     * @param targetInterface
-     * @param <I>
-     * @param <T>
-     * @return
-     */
-    private static <I, T extends I> T prepare(T target, Class<I> targetInterface) {
     	try {
-    		return PROVIDER.getHandler(target, targetInterface, false).getProxy();
+    		return provider.getHandler(target, null, false).getProxy();
     	} catch (DelegationException e) {
     		throw new RuntimeException(e);
     	}
@@ -79,7 +66,11 @@ public class Minytock {
      * @return
      */
     public static <T> DelegationHandler<T> delegate(T target) {
-    	return delegate(target, null);
+    	try {
+    		return provider.getHandler(target, null, true);
+    	} catch (DelegationException e) {
+    		throw new RuntimeException(e);
+    	}
     }
 
     /**
@@ -87,7 +78,7 @@ public class Minytock {
      *
      */
     public static void remove(Object ... targets) {
-    	getProvider().remove(targets);
+    	provider.removeDelegates(targets);
     }
 
     /**
@@ -98,30 +89,21 @@ public class Minytock {
      * @return the real object behind the given proxy.  if the given object is not a proxy, it just returns that object
      */
     public static <T> T real(T target) {
-    	return getProvider().getReal(target);
-    }
-
-    private static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface) {
-    	return delegate(target, targetInterface, true); //true to enforce good practice
-    }
-
-    private static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface, boolean requireProxy) {
-    	try {
-    		return PROVIDER.getHandler(target, targetInterface, requireProxy);
-    	} catch (DelegationException e) {
-    		throw new RuntimeException(e);
-    	}
+    	return provider.getReal(target);
     }
 
     /**
      * cleans up delegation resources to reduce memory imprint.  automatically called from the minytock test runners.
      */
-    public static void clearAll() {
-    	PROVIDER.clearCache();
+    public static void clearDelegates() {
+    	provider.removeAllDelegates();
     }
 
-    public static void verify(Object ... proxies) {
-    	for (Object proxy : proxies) {
+    /**
+     * @param targets mock objects (ostensibly) to be verified according to their @Verify annotations
+     */
+    public static void verify(Object ... targets) {
+    	for (Object proxy : targets) {
     		Object delegate = delegate(proxy).getDelegate();
             if (delegate instanceof Verifiable) {
                 ((Verifiable) delegate).verify();
@@ -129,6 +111,10 @@ public class Minytock {
     	}
     }
 
+    /**
+     * @param classToMock
+     * @return a mock implementation of the given class that is ready for delegation, if desired
+     */
     public static <T> T newEmptyMock(Class<T> classToMock) {
         return EmptyMockFactory.create(classToMock);
     }
@@ -143,10 +129,6 @@ public class Minytock {
 
     public static <T> Spy.Hijacker<T> get(Class<T> classToGet) {
         return Spy.get(classToGet);
-    }
-    
-    public static DelegationHandlerProvider getProvider() {
-    	return PROVIDER;
     }
 
 }

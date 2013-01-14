@@ -42,6 +42,16 @@ public abstract class AbstractDelegationCache implements DelegationHandlerCache 
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void clearDelegatesOnly() {
+		for (DelegationHandler<?> handler : this.getCache().values()) {
+			handler.remove();
+		}
+	}
+	
+	/**
 	 * @return a map for storing the handlers
 	 */
 	protected abstract Map<String, DelegationHandler<?>> getCache();

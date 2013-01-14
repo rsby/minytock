@@ -10,6 +10,9 @@ public class DelegationHandlerProviderImpl implements DelegationHandlerProvider 
 		this.cache = cache;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
     public <I, T extends I> DelegationHandler<T> getHandler(T target, Class<I> targetInterface, boolean requireProxy) throws DelegationException {
 
@@ -40,16 +43,9 @@ public class DelegationHandlerProviderImpl implements DelegationHandlerProvider 
         return handler;
     }
     
-    @Override
-    public void clearCache() {
-    	cache.clear();
-    }
-
-	@Override
-	public void setCache(DelegationHandlerCache cache) {
-		this.cache = cache;
-	}
-
+    /**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public <T> T getReal(T target) {
 		
@@ -66,9 +62,20 @@ public class DelegationHandlerProviderImpl implements DelegationHandlerProvider 
         }
         
 	}
+    
+    /**
+	 * {@inheritDoc}
+	 */
+    @Override
+    public void removeAllDelegates() {
+    	cache.clearDelegatesOnly();
+    }
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void remove(Object... targets) {
+	public void removeDelegates(Object... targets) {
 		for (Object target : targets) {
 			
 			DelegationHandler<?> handler = cache.get(target);

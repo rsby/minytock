@@ -21,7 +21,7 @@ public class EmptyMockFactory {
     @SuppressWarnings("unchecked")
     public static <T> T create(Class<T> classToMock) {
         try {
-			return Minytock.getProvider().getHandler((T) getEmptyProxy(classToMock), classToMock, false).getProxy();
+			return Minytock.provider.getHandler((T) getEmptyProxy(classToMock), classToMock, false).getProxy();
 		} catch (DelegationException e) {
     		throw new RuntimeException(e);
     	}

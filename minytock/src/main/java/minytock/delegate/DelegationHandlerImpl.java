@@ -15,28 +15,43 @@ public class DelegationHandlerImpl<T> implements DelegationHandler<T> {
 		this.interceptor = interceptor;
 	}
 
+    /**
+     * {@inheritDoc}
+     */
 	@Override
     public T to(Object delegate) {
         this.interceptor.setDelegate(delegate);
         return this.interceptor.getProxy();
     }
 
+	/**
+     * {@inheritDoc}
+     */
     @Override
     public T remove() {
         this.interceptor.removeDelegate();
         return this.interceptor.getProxy();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public T getProxy() {
         return this.interceptor.getProxy();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public T getRealObject() {
         return this.interceptor.getRealObject();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getDelegate() {
         return this.interceptor.getDelegate();
