@@ -1,5 +1,4 @@
 
-
 ===basic junit + spring example===
 
 java code
@@ -41,18 +40,9 @@ public class ExampleTest {
 config code
 
 {{{
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans 
-           http://www.springframework.org/schema/beans/spring-beans.xsd">
-    
-    <bean class="minytock.SomeService"/>
-    
-    <bean class="minytock.SomeOtherService"/>
-    
+
     <bean class="minytock.spring.MinytockPostProcessor"/>
-	
-</beans>
+
 }}}
 
 ===what's going on in the example===
