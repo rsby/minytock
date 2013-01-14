@@ -20,7 +20,7 @@ import minytock.test.Verifiable;
  */
 public class Minytock {
 	
-	private static final DelegationHandlerProvider PROVIDER = new DelegationHandlerProviderImpl(new DefaultDelegationCache());
+	private static final DelegationHandlerProvider PROVIDER = new DelegationHandlerProviderImpl(new DefaultDelegationHandlerCache());
 
     /**
      * get a delegatable proxy of the given object.  this can be done automatically for all autowired beans
