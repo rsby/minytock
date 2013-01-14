@@ -1,7 +1,7 @@
 package minytock.spring;
 
 import minytock.Minytock;
-import minytock.delegate.LocalDelegationCache;
+import minytock.delegate.ThreadLocalDelegationHandlerCache;
 import minytock.test.Ready;
 import minytock.test.ReadyAssistant;
 
@@ -15,7 +15,7 @@ public class MinytockTestExecutionListener extends DependencyInjectionTestExecut
 	@SuppressWarnings("unchecked")
 	@Override
 	public void beforeTestClass(TestContext testContext) throws Exception {
-		Minytock.getProvider().setCache(new LocalDelegationCache());
+		Minytock.getProvider().setCache(new ThreadLocalDelegationHandlerCache());
 		assistant = new ReadyAssistant(testContext.getTestClass(), Ready.class);
 		super.beforeTestClass(testContext);
 	}
