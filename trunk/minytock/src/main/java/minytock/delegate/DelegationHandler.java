@@ -37,10 +37,27 @@ public interface DelegationHandler<T> {
      */
     public T getRealObject();
 
+    /**
+     * 
+     * @return
+     */
     public Object getDelegate();
     
+    /**
+     * 
+     * @author reesbyars
+     *
+     * @param <T>
+     */
     static class Factory<T> {
     
+    	/**
+    	 * 
+    	 * @param target
+    	 * @param targetInterface
+    	 * @return
+    	 * @throws DelegationException
+    	 */
     	public static <I, T extends I> DelegationHandler<T> create(T target, Class<I> targetInterface) throws DelegationException {
     		return new DelegationHandlerImpl<T>(DelegationInterceptor.Factory.create(target, targetInterface));
     	}

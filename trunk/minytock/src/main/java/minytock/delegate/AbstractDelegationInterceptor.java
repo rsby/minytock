@@ -27,6 +27,9 @@ public abstract class AbstractDelegationInterceptor<T> implements DelegationInte
         this.setDelegate(realObject);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @SuppressWarnings("unchecked")
 	@Override
     public void setDelegate(Object delegate) {
@@ -51,6 +54,9 @@ public abstract class AbstractDelegationInterceptor<T> implements DelegationInte
         this.delegate = delegate;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public T removeDelegate() {
         this.delegate = this.realObject;
@@ -60,16 +66,25 @@ public abstract class AbstractDelegationInterceptor<T> implements DelegationInte
         return this.proxy;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public T getProxy() {
         return this.proxy;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public T getRealObject() {
         return this.realObject;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getDelegate() {
         return this.delegate;

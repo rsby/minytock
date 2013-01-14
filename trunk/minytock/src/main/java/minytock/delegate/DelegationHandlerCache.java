@@ -34,5 +34,10 @@ public interface DelegationHandlerCache {
 	 * clears all handlers from the cache
 	 */
 	void clear();
+	
+	/**
+	 * clears the delegate from each handler, but leaves the handler in place otherwise
+	 */
+	void clearDelegatesOnly();
 
 }
