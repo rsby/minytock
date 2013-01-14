@@ -65,6 +65,12 @@ public class EmptyMockFactory {
         return value;
     }
 
+    /**
+     * this method's implementation borrows some direction from jmockit
+     * 
+     * @param type
+     * @return
+     */
     private static Object resolvePrimitive(Class<?> type) {
         if (type == byte.class) {
             return (byte) 1;
