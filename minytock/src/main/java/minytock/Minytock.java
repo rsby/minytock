@@ -87,9 +87,7 @@ public class Minytock {
      *
      */
     public static void remove(Object ... targets) {
-    	for (Object target : targets) {
-    		delegate(target, null).remove();
-    	}
+    	getProvider().remove(targets);
     }
 
     /**
@@ -100,7 +98,7 @@ public class Minytock {
      * @return the real object behind the given proxy.  if the given object is not a proxy, it just returns that object
      */
     public static <T> T real(T target) {
-    	return delegate(target, null, false).getRealObject();
+    	return getProvider().getReal(target);
     }
 
     private static <I, T extends I> DelegationHandler<T> delegate(T target, Class<I> targetInterface) {

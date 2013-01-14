@@ -27,14 +27,13 @@ public class DelegationHandlerProviderImpl implements DelegationHandlerProvider 
             throw new DelegationException("Target cannot be null.  If trying to create an empty proxy of an interface, use the EmptyMockFactory or the Minytock.newEmptyMock() method.");
         }
 
-        @SuppressWarnings("unchecked")
-        DelegationHandler<T> handler = (DelegationHandler<T>) cache.get(target);
+        DelegationHandler<T> handler = cache.get(target);
 
         if (handler == null) {
 
             handler = DelegationHandler.Factory.create(target, targetInterface);
 
-            cache.put(target, handler);
+            cache.put(handler);
 
         }
 
@@ -49,6 +48,36 @@ public class DelegationHandlerProviderImpl implements DelegationHandlerProvider 
 	@Override
 	public void setCache(DelegationHandlerCache cache) {
 		this.cache = cache;
+	}
+
+	@Override
+	public <T> T getReal(T target) {
+		
+		DelegationHandler<T> handler = cache.get(target);
+
+        if (handler == null) {
+        	
+        	return target;
+        	
+        } else {
+        	
+        	return handler.getRealObject();
+        	
+        }
+        
+	}
+
+	@Override
+	public void remove(Object... targets) {
+		for (Object target : targets) {
+			
+			DelegationHandler<?> handler = cache.get(target);
+			
+	        if (handler != null) {
+	        	handler.remove();
+	        }
+	        
+    	}
 	}
 
 }
