@@ -14,7 +14,7 @@ import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-import static minytock.Minytock.*;
+import static minytock.test.MinytockTest.*;
 
 @RunWith(MinytockSpringRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
@@ -49,7 +49,7 @@ public class ExampleTest {
 	@Test
 	public void testAopProxy() {
 		/*
-		Minytock.provider = new SpringAopDelegationHandlerProvider(Spy.get(DelegationHandlerCache.class).from(provider));
+		MinytockIntegrationTests.provider = new SpringAopDelegationHandlerProvider(Spy.get(DelegationHandlerCache.class).from(provider));
 		
 		TestBean bean = new TestBean();
 		ProxyFactory factory = new ProxyFactory();

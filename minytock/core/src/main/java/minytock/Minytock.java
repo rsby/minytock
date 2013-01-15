@@ -2,9 +2,6 @@ package minytock;
 
 import minytock.delegate.*;
 import minytock.spy.Spy;
-import minytock.test.EmptyMockFactory;
-import minytock.test.Ready;
-import minytock.test.Verifiable;
 
 /**
  * A sort of "static interface" to the Minytock delegation framework that can be imported into test classes
@@ -97,26 +94,6 @@ public class Minytock {
      */
     public static void clearDelegates() {
     	provider.removeAllDelegates();
-    }
-
-    /**
-     * @param targets mock objects (ostensibly) to be verified according to their @Verify annotations
-     */
-    public static void verify(Object ... targets) {
-    	for (Object proxy : targets) {
-    		Object delegate = delegate(proxy).getDelegate();
-            if (delegate instanceof Verifiable) {
-                ((Verifiable) delegate).verify();
-            }
-    	}
-    }
-
-    /**
-     * @param classToMock
-     * @return a mock implementation of the given class that is ready for delegation, if desired
-     */
-    public static <T> T newEmptyMock(Class<T> classToMock) {
-        return EmptyMockFactory.create(classToMock);
     }
 
     /**

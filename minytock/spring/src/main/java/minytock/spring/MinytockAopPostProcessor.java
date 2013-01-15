@@ -11,11 +11,11 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.target.HotSwappableTargetSource;
 
 /**
- * Pretty the same as the {@link MinytockPostProcessor}, but made to work with Spring AOP proxies.
+ * Pretty the same as the {@link DelegationPostProcessor}, but made to work with Spring AOP proxies.
  * <p/>
  * MinytockAopPostProcessor
  */
-public class MinytockAopPostProcessor extends MinytockPostProcessor {
+public class MinytockAopPostProcessor extends DelegationPostProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinytockAopPostProcessor.class);
     

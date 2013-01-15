@@ -61,7 +61,7 @@
 	<modules>
 		<module>core</module>
 		<module>spring</module>
-		<module>junit</module>
+		<module>test</module>
 	</modules>
 	
 	<dependencyManagement>
@@ -70,17 +70,17 @@
 		
 			<dependency>
 				<groupId>com.googlecode.minytock</groupId>
-				<artifactId>core</artifactId>
+				<artifactId>minytock-core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.googlecode.minytock</groupId>
-				<artifactId>junit</artifactId>
+				<artifactId>minytock-test</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.googlecode.minytock</groupId>
-				<artifactId>spring</artifactId>
+				<artifactId>minytock-spring</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 		
