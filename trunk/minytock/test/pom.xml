@@ -3,10 +3,10 @@
 	
 	<modelVersion>4.0.0</modelVersion>
 	
-	<artifactId>minytock-core</artifactId>
+	<artifactId>minytock-test</artifactId>
 	
-	<name>minytock-core</name>
-	<description>an ultra-tiny yet rich mocking toolkit for java integration tests</description>
+	<name>minytock-test</name>
+	<description>facilities for using minytock in integration and unit tests</description>
 
 	<parent>
 		<groupId>com.googlecode.minytock</groupId>
@@ -15,7 +15,12 @@
 	</parent>
 
 	<dependencies>
-
+	
+		<dependency>
+			<groupId>com.googlecode.minytock</groupId>
+			<artifactId>minytock-core</artifactId>
+		</dependency>
+		
 		<dependency>
 			<groupId>cglib</groupId>
 			<artifactId>cglib</artifactId>
@@ -23,14 +28,13 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<scope>test</scope>
+			<artifactId>slf4j-api</artifactId>
 		</dependency>
 
 	</dependencies>

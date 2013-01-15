@@ -1,6 +1,6 @@
 package minytock.spring;
 
-import minytock.Minytock;
+import minytock.test.MinytockTest;
 
 import org.springframework.beans.factory.FactoryBean;
 
@@ -22,7 +22,7 @@ public class MinytockFactoryBean<C> implements FactoryBean<C> {
 
     @Override
     public C getObject() throws Exception {
-        return Minytock.newEmptyMock(type);
+        return MinytockTest.newEmptyMock(type);
     }
 
     @Override

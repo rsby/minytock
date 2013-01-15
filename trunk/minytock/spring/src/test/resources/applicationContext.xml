@@ -9,6 +9,6 @@
     
     <bean class="minytock.SomeOtherService"/>
     
-    <bean class="minytock.spring.MinytockPostProcessor"/>
+    <bean class="minytock.spring.DelegationPostProcessor"/>
 	
 </beans>

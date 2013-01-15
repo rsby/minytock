@@ -3,7 +3,7 @@
 	
 	<modelVersion>4.0.0</modelVersion>
 	
-	<artifactId>spring</artifactId>
+	<artifactId>minytock-spring</artifactId>
 	
 	<name>minytock-spring</name>
 	<description>facilities for integrating minytock with the spring framework</description>
@@ -18,11 +18,11 @@
 	
 		<dependency>
 			<groupId>com.googlecode.minytock</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>minytock-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.minytock</groupId>
-			<artifactId>junit</artifactId>
+			<artifactId>minytock-test</artifactId>
 			<optional>true</optional>
 		</dependency>
 

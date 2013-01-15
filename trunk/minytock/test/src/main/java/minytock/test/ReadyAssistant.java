@@ -5,8 +5,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import minytock.Minytock;
-
 public class ReadyAssistant {
 	
 	List<Field> mockedFields = new ArrayList<Field>();
@@ -27,9 +25,9 @@ public class ReadyAssistant {
 		for (Field field : mockedFields) {
 			Object value = field.get(testInstance);
 			if (value == null) {
-				field.set(testInstance, Minytock.newEmptyMock(field.getType()));
+				field.set(testInstance, MinytockTest.newEmptyMock(field.getType()));
 			} else {
-				field.set(testInstance, Minytock.prepare(value));
+				field.set(testInstance, MinytockTest.prepare(value));
 			}
 		}
 	}
@@ -37,7 +35,7 @@ public class ReadyAssistant {
 	public void afterBefores(Object testInstance) throws IllegalArgumentException, IllegalAccessException {
 		for (Field field : mockedFields) {
 			Object value = field.get(testInstance);
-			field.set(testInstance, Minytock.prepare(value));
+			field.set(testInstance, MinytockTest.prepare(value));
 		}
 	}
 
