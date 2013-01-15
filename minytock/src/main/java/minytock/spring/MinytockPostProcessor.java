@@ -4,25 +4,25 @@ import minytock.Minytock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.core.PriorityOrdered;
 import org.springframework.util.StringUtils;
 
 /**
  * The Minytock interface to the Spring IoC layer.  Packages and classes can be declared for automatic
- * preparing of Spring-managed beans (makes them ready for using {@link minytock.Minytock#delegate(Object)},
- * lazy-initialization of beans, and auto-empty-mocking of Spring beans (useful when
- * all you have available is an interface).
+ * preparing of Spring-managed beans (makes them ready for using {@link minytock.Minytock#delegate(Object)}
+ * and auto-empty-mocking of Spring beans (useful when all you have available is an interface).
  * <p/>
  * Example usage:
  * <pre>
  * &lt;bean class=&quot;minytock.spring.MinytockPostProcessor&quot;&gt;
  *    &lt;property name=&quot;mockablePackages&quot; value=&quot;orb.byars&quot;/&gt;
- *    &lt;property name=&quot;lazyInitPackages&quot; value=&quot;org.byars.foo, org.byars.bar&quot;/&gt;
  *    &lt;property name=&quot;emptyMockClasses&quot; value=&quot;org.byars.SomeService, org.byars.SomeOtherService&quot;/&gt;
  * &lt;/bean&gt;
  * </pre>
@@ -33,20 +33,15 @@ import org.springframework.util.StringUtils;
  * <p/>
  * MinytockPostProcessor
  */
-public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPostProcessor {
+public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPostProcessor, PriorityOrdered {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinytockPostProcessor.class);
 
     String[] mockablePackages = {""};
-    String[] lazyInitPackages = {"NONE"};
     String[] emptyMockClasses = {};
 
     public void setMockablePackages(String mockablePackages) {
         this.mockablePackages = StringUtils.trimAllWhitespace(mockablePackages).split(",");
-    }
-
-    public void setLazyInitPackages(String lazyInitPackages) {
-        this.lazyInitPackages = StringUtils.trimAllWhitespace(lazyInitPackages).split(",");
     }
 
     public void setEmptyMockClasses(String emptyMockClasses) {
@@ -55,15 +50,16 @@ public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPost
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-        return bean;
+    	return bean;
     }
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-
-        boolean doProxy = false;
+    	LOG.debug("Minytock checking [" + beanName +  "] for delegation");
+    	boolean doProxy = false;
+    	Class<?> realClass = AopUtils.getTargetClass(bean);
         for (String pack : mockablePackages) {
-            if (bean.getClass().getName().startsWith(pack) && !beanName.endsWith("Test")) {
+            if (realClass.getName().startsWith(pack) && !beanName.endsWith("Test")) {
                 doProxy = true;
                 break;
             }
@@ -71,7 +67,10 @@ public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPost
         Object proxy = bean;
         try {
             if (doProxy) {
-                proxy = Minytock.prepare(proxy);
+            	LOG.debug("Minytock preparing [" + beanName +  "] for delegation");
+                proxy = Minytock.provider.getHandler(proxy, realClass, false).getProxy();
+            } else {
+            	LOG.debug("Minytock skipping [" + beanName +  "] as not eligible delegation");
             }
         } catch (Exception e) {
             //nuthin
@@ -81,15 +80,6 @@ public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPost
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        for (String bean : beanFactory.getBeanDefinitionNames()){
-            BeanDefinition definition = beanFactory.getBeanDefinition(bean);
-            String beanClassName = definition.getBeanClassName();
-            for (String pack : this.lazyInitPackages) {
-                if (beanClassName.startsWith(pack) && !beanClassName.endsWith("Test")) {
-                    definition.setLazyInit(true);
-                }
-            }
-        }
         for (String className : this.emptyMockClasses) {
             try {
                 Class<?> beanClass = Class.forName(className);
@@ -100,6 +90,14 @@ public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPost
                 LOG.error("Could not obtain class " + className + ".  Empty mocking cannot be performed.  Message:  " + e.getMessage());
             }
         }
-
     }
+
+    /**
+     * we want to be an early post-processor so that our proxy gets included in down-stream dynamic configurations
+     */
+	@Override
+	public int getOrder() {
+		return 0;
+	}
+    
 }

@@ -23,7 +23,7 @@ public abstract class AbstractDelegationInterceptor<T> implements DelegationInte
 
     protected AbstractDelegationInterceptor(T realObject) {
         this.realObject = realObject;
-        this.realObjectClass = realObject.getClass();
+        this.realObjectClass = realObject.getClass(); 
         this.setDelegate(realObject);
     }
 

@@ -2,6 +2,8 @@ package minytock.delegate;
 
 import java.util.Map;
 
+import minytock.util.ProxyUtil;
+
 /**
  * 
  * a base caching class that makes it simple to create new cache implementations without rewriting the common logic
@@ -27,7 +29,11 @@ public abstract class AbstractDelegationCache implements DelegationHandlerCache 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> DelegationHandler<T> get(T key) {
-		return (DelegationHandler<T>) getCache().get(getCacheKey(key));
+		DelegationHandler<T> handler = (DelegationHandler<T>) getCache().get(getCacheKey(key));
+		if (handler == null && ProxyUtil.isProxyClass(key.getClass())) {
+			
+		}
+		return handler;
 	}
 	
 	/**

@@ -17,7 +17,7 @@ public interface DelegationHandlerProvider {
 	 * @return
 	 * @throws DelegationException
 	 */
-	<I, T extends I> DelegationHandler<T> getHandler(T target, Class<I> targetInterface, boolean requireProxy) throws DelegationException;
+	<T> DelegationHandler<T> getHandler(T target, Class<?> targetInterface, boolean requireProxy) throws DelegationException;
 	
 	/**
 	 * 

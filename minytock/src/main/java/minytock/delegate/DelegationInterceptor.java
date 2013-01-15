@@ -63,7 +63,7 @@ public interface DelegationInterceptor<T> {
             }
         }
 
-        protected static <I, T extends I> DelegationInterceptor<T> create(T target, Class<I> targetInterface) throws DelegationException {
+        protected static <T> DelegationInterceptor<T> create(T target, Class<?> targetInterface) throws DelegationException {
             if (useCgLib) {
                 return CgLibDelegationInterceptor.create(target, targetInterface);
             } else {

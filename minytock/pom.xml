@@ -80,9 +80,10 @@
 			<scope>provided</scope>
 		</dependency>
 		
+		
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-beans</artifactId>
+			<artifactId>spring-aop</artifactId>
 			<version>${spring.version}</version>
 			<optional>true</optional>
 		</dependency>
