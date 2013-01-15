@@ -7,9 +7,9 @@ import minytock.delegate.DelegationHandler;
 import minytock.delegate.DelegationHandlerCache;
 import minytock.delegate.DelegationHandlerProviderImpl;
 
-public class SpringDelegationHandlerProvider extends DelegationHandlerProviderImpl {
+public class SpringAopDelegationHandlerProvider extends DelegationHandlerProviderImpl {
 
-	public SpringDelegationHandlerProvider(DelegationHandlerCache cache) {
+	public SpringAopDelegationHandlerProvider(DelegationHandlerCache cache) {
 		super(cache);
 	}
 	
@@ -20,9 +20,13 @@ public class SpringDelegationHandlerProvider extends DelegationHandlerProviderIm
 	@Override
     public <T> DelegationHandler<T> getHandler(T target, Class<?> targetInterface, boolean requireProxy) throws DelegationException {
 		try {
-			return (DelegationHandler<T>) super.getHandler(((Advised) target).getTargetSource().getTarget(), targetInterface, requireProxy);
-		} catch (Exception e) {
-			return super.getHandler(target, targetInterface, requireProxy);
+			if (target instanceof Advised) {
+				return (DelegationHandler<T>) super.getHandler(((Advised) target).getTargetSource().getTarget(), targetInterface, requireProxy);
+			} else {
+				return super.getHandler(target, targetInterface, requireProxy);
+			}
+		} catch (Exception e) {	
+			throw new DelegationException("Exception obtaining handler", e);
 		}
 	}
 

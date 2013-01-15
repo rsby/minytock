@@ -11,7 +11,11 @@ public class DelegationException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 
-	DelegationException(String message) {
+	public DelegationException(String message) {
         super(message);
+    }
+	
+	public DelegationException(String message, Exception e) {
+        super(message, e);
     }
 }

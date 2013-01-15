@@ -1,6 +1,9 @@
 package minytock;
 
+import minytock.delegate.DelegationHandlerCache;
 import minytock.junit.MinytockRunner;
+import minytock.spring.SpringAopDelegationHandlerProvider;
+import minytock.spy.Spy;
 import minytock.test.Mock;
 import minytock.test.Ready;
 import minytock.test.Verify;
@@ -8,6 +11,7 @@ import minytock.test.Verify;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.aop.framework.ProxyFactory;
 
 import static minytock.Minytock.*;
 import static org.junit.Assert.assertEquals;
@@ -84,6 +88,20 @@ public class MinytockTest {
 		
 		bean2.test("ffff");
 		
+	}
+	
+	@Test
+	public void testAopProxy() {
+		
+		Minytock.provider = new SpringAopDelegationHandlerProvider(Spy.get(DelegationHandlerCache.class).from(provider));
+		
+		bean = new TestBean();
+		ProxyFactory factory = new ProxyFactory();
+		factory.setTarget(bean);
+		bean = (TestBean) factory.getProxy();
+		bean = prepare(bean);
+		delegate(bean).to(bean2);
+		bean.test("yo");
 	}
 
 }
