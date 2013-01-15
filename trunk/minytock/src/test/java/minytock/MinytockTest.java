@@ -29,6 +29,8 @@ public class MinytockTest {
 	@Test
 	public void test() {
 		
+		Minytock.real(bean2).test("asdf");
+		
 		final String expected = "lordy";
 		
 		Mock<TestBean> mock = new Mock<TestBean>() {

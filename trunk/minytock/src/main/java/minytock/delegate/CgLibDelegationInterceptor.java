@@ -66,7 +66,7 @@ public class CgLibDelegationInterceptor<T> extends AbstractDelegationInterceptor
      * @return
      */
     @SuppressWarnings("unchecked")
-    protected static <I, T extends I> DelegationInterceptor<T> create(T target, Class<I> targetInterface) {
+    protected static <T> DelegationInterceptor<T> create(T target, Class<?> targetInterface) {
         CgLibDelegationInterceptor<T> interceptor = new CgLibDelegationInterceptor<T>(target);
         if (targetInterface != null) {
             interceptor.proxy = (T) Enhancer.create(targetInterface, interceptor);

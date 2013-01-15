@@ -65,7 +65,7 @@ public class JdkDelegationInterceptor<T> extends AbstractDelegationInterceptor<T
      * @throws DelegationException
      */
     @SuppressWarnings("unchecked")
-    protected static <I, T extends I> DelegationInterceptor<T> create(T target, Class<I> targetInterface) throws DelegationException {
+    protected static <T> DelegationInterceptor<T> create(T target, Class<?> targetInterface) throws DelegationException {
         JdkDelegationInterceptor<T> interceptor = new JdkDelegationInterceptor<T>(target);
         if (targetInterface == null || !targetInterface.isInterface()) {
             Class<?> targetClass = target.getClass();

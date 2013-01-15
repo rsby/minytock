@@ -60,7 +60,7 @@ public interface DelegationHandler<T> {
     	 * @return
     	 * @throws DelegationException
     	 */
-    	public static <I, T extends I> DelegationHandler<T> create(T target, Class<I> targetInterface) throws DelegationException {
+    	public static <T> DelegationHandler<T> create(T target, Class<?> targetInterface) throws DelegationException {
     		return new DelegationHandlerImpl<T>(DelegationInterceptor.Factory.create(target, targetInterface));
     	}
     }

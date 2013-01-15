@@ -21,8 +21,12 @@ public class DelegationHandlerProviderImpl implements DelegationHandlerProvider 
 	 * {@inheritDoc}
 	 */
 	@Override
-    public <I, T extends I> DelegationHandler<T> getHandler(T target, Class<I> targetInterface, boolean requireProxy) throws DelegationException {
+    public <T> DelegationHandler<T> getHandler(T target, Class<?> targetInterface, boolean requireProxy) throws DelegationException {
 
+		if (target == null) {
+            throw new DelegationException("Target cannot be null.  If trying to create an empty proxy of an interface, use the EmptyMockFactory or the Minytock.newEmptyMock() method.");
+        }
+		
         if (requireProxy && !ProxyUtil.isProxyClass(target.getClass())) {
         	throw new DelegationException("The target is not a proxy.  A proxy must first be obtained using prepare(target) and then passed as the target.");
         }
@@ -31,13 +35,9 @@ public class DelegationHandlerProviderImpl implements DelegationHandlerProvider 
 
     }
 
-    private <I, T extends I> DelegationHandler<T> getHandler(T target, Class<I> targetInterface) throws DelegationException {
+    private <T> DelegationHandler<T> getHandler(T target, Class<?> targetInterface) throws DelegationException {
 
-        if (target == null) {
-            throw new DelegationException("Target cannot be null.  If trying to create an empty proxy of an interface, use the EmptyMockFactory or the Minytock.newEmptyMock() method.");
-        }
-
-        DelegationHandler<T> handler = cache.get(target);
+        DelegationHandler<T> handler = cache.get(target); //proxy!!!
 
         if (handler == null) {
 
