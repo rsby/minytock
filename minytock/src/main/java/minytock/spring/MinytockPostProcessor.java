@@ -1,6 +1,7 @@
 package minytock.spring;
 
 import minytock.Minytock;
+import minytock.delegate.DelegationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.core.PriorityOrdered;
 import org.springframework.util.StringUtils;
 
 /**
@@ -31,7 +31,7 @@ import org.springframework.util.StringUtils;
  * <p/>
  * MinytockPostProcessor
  */
-public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPostProcessor, PriorityOrdered {
+public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPostProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinytockPostProcessor.class);
 
@@ -53,27 +53,34 @@ public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPost
 
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+    	
     	LOG.info("Minytock checking [" + beanName +  "] for delegation");
+    	
     	boolean doProxy = false;
-    	Class<?> realClass = bean.getClass();
+    	Class<?> realClass = this.getBeanClass(bean);
         for (String pack : mockablePackages) {
             if (realClass.getName().startsWith(pack) && !beanName.endsWith("Test")) {
                 doProxy = true;
                 break;
             }
         }
-        Object proxy = bean;
-        try {
-            if (doProxy) {
-            	LOG.info("Minytock preparing [" + beanName +  "] for delegation");
-                proxy = Minytock.provider.getHandler(proxy, realClass, false).getProxy();
-            } else {
-            	LOG.info("Minytock skipping [" + beanName +  "] as not eligible delegation");
-            }
-        } catch (Exception e) {
-            //nuthin
+        
+        if (!doProxy) {
+        	LOG.info("Minytock skipping [" + beanName +  "] as not eligible delegation");
+        	return bean;
         }
-        return proxy;
+        
+        try {
+
+        	LOG.info("Minytock preparing [" + beanName +  "] for delegation");
+            return this.prepare(bean, realClass);
+ 
+        } catch (Exception e) {
+        	
+        	LOG.error("An exception occurred attempting to prepare the bean [" + beanName + "].  Forgoing preparation for this bean.  It will not be eligible for delegation.", e);
+            return bean;
+            
+        }
     }
 
     @Override
@@ -90,12 +97,12 @@ public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPost
         }
     }
 
-    /**
-     * we want to be an early post-processor so that our proxy gets included in down-stream dynamic configurations
-     */
-	@Override
-	public int getOrder() {
-		return 0;
-	}
+    protected Class<?> getBeanClass(Object bean) {
+    	return bean.getClass();
+    }
+    
+    protected Object prepare(Object bean, Class<?> beanClass) throws DelegationException {
+    	return Minytock.provider.getHandler(bean, beanClass, false).getProxy();
+    }
     
 }
