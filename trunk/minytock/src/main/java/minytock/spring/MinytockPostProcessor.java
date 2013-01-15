@@ -1,5 +1,7 @@
 package minytock.spring;
 
+import java.lang.reflect.Modifier;
+
 import minytock.Minytock;
 import minytock.delegate.DelegationException;
 
@@ -56,10 +58,16 @@ public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPost
     	
     	LOG.info("Minytock checking [" + beanName +  "] for delegation");
     	
+    	Class<?> targetClass = this.getTargetClass(bean);
+    	
+    	if (Modifier.isFinal(targetClass.getModifiers())) {
+    		LOG.info("Minytock skipping [" + beanName +  "] as not eligible delegation because its class is final and cannot be proxied");
+    		return bean;
+    	}
+    	
     	boolean doProxy = false;
-    	Class<?> realClass = this.getBeanClass(bean);
         for (String pack : mockablePackages) {
-            if (realClass.getName().startsWith(pack) && !beanName.endsWith("Test")) {
+            if (targetClass.getName().startsWith(pack) && !beanName.endsWith("Test")) {
                 doProxy = true;
                 break;
             }
@@ -73,7 +81,7 @@ public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPost
         try {
 
         	LOG.info("Minytock preparing [" + beanName +  "] for delegation");
-            return this.prepare(bean, realClass);
+            return this.prepare(bean, targetClass);
  
         } catch (Exception e) {
         	
@@ -97,12 +105,12 @@ public class MinytockPostProcessor implements BeanPostProcessor, BeanFactoryPost
         }
     }
 
-    protected Class<?> getBeanClass(Object bean) {
+    protected Class<?> getTargetClass(Object bean) {
     	return bean.getClass();
     }
     
-    protected Object prepare(Object bean, Class<?> beanClass) throws DelegationException {
-    	return Minytock.provider.getHandler(bean, beanClass, false).getProxy();
+    protected Object prepare(Object bean, Class<?> targetClass) throws DelegationException {
+    	return Minytock.provider.getHandler(bean, targetClass, false).getProxy();
     }
     
 }

@@ -24,14 +24,14 @@ public class MinytockAopPostProcessor extends MinytockPostProcessor {
     }
     
     @Override
-    protected Class<?> getBeanClass(Object bean) {
+    protected Class<?> getTargetClass(Object bean) {
     	return AopUtils.getTargetClass(bean);
     }
     
     @Override
-    protected Object prepare(Object bean, Class<?> beanClass) throws DelegationException {
+    protected Object prepare(Object bean, Class<?> targetClass) throws DelegationException {
     	
-    	Object minytockProxy = Minytock.provider.getHandler(bean, beanClass, false).getProxy();
+    	Object minytockProxy = Minytock.provider.getHandler(bean, targetClass, false).getProxy();
         
         //simply swap if bean is hot-swappable
         if (bean instanceof HotSwappableTargetSource ) {
