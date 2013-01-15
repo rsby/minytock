@@ -9,53 +9,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.target.HotSwappableTargetSource;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.util.StringUtils;
 
 /**
- * The Minytock interface to the Spring IoC layer.  Packages and classes can be declared for automatic
- * preparing of Spring-managed beans (makes them ready for using {@link minytock.Minytock#delegate(Object)}
- * and auto-empty-mocking of Spring beans (useful when all you have available is an interface).
+ * Pretty the same as the {@link MinytockPostProcessor}, but made to work with Spring AOP proxies.
  * <p/>
- * Example usage:
- * <pre>
- * &lt;bean class=&quot;minytock.spring.MinytockPostProcessor&quot;&gt;
- *    &lt;property name=&quot;mockablePackages&quot; value=&quot;orb.byars&quot;/&gt;
- *    &lt;property name=&quot;emptyMockClasses&quot; value=&quot;org.byars.SomeService, org.byars.SomeOtherService&quot;/&gt;
- * &lt;/bean&gt;
- * </pre>
- * <p/>
- * User: reesbyars
- * Date: 9/11/12
- * Time: 5:16 PM
- * <p/>
- * MinytockPostProcessor
+ * MinytockAopPostProcessor
  */
-public class MinytockAopPostProcessor implements BeanPostProcessor, BeanFactoryPostProcessor {
+public class MinytockAopPostProcessor extends MinytockPostProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinytockAopPostProcessor.class);
-
-    String[] mockablePackages = {""};
-    String[] emptyMockClasses = {};
     
     public MinytockAopPostProcessor() {
     	Minytock.provider = new SpringAopDelegationHandlerProvider(Spy.get(DelegationHandlerCache.class).from(Minytock.provider));
-    }
-
-    public void setMockablePackages(String mockablePackages) {
-        this.mockablePackages = StringUtils.trimAllWhitespace(mockablePackages).split(",");
-    }
-
-    public void setEmptyMockClasses(String emptyMockClasses) {
-        this.emptyMockClasses = StringUtils.trimAllWhitespace(emptyMockClasses).split(",");
-    }
-
-    @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-    	return bean;
     }
 
     @Override
@@ -89,20 +54,6 @@ public class MinytockAopPostProcessor implements BeanPostProcessor, BeanFactoryP
         	return minytockProxy;
         }
         
-    }
-
-    @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        for (String className : this.emptyMockClasses) {
-            try {
-                Class<?> beanClass = Class.forName(className);
-                FactoryBean<?> factoryBean = MinytockFactoryBean.getFor(beanClass);
-                String name = className + "$MINYTOCK_PROXY$";
-                beanFactory.registerSingleton(name, factoryBean);
-            } catch (ClassNotFoundException e) {
-                LOG.error("Could not obtain class " + className + ".  Empty mocking cannot be performed.  Message:  " + e.getMessage());
-            }
-        }
     }
     
 }
