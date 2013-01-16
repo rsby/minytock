@@ -19,6 +19,40 @@ public class PerfTest {
 	}
 	
 	@Test
+	public void testPerfOneShotMock() {
+		
+		Service service1 = new Service();
+		
+		long start = System.currentTimeMillis();
+		long numCalls = 100;
+		for (int i = 0; i < numCalls; i++) {
+			service1 = Minytock.prepare(new Service()); //really, this wouldn't have to happen for each new mock, but minytock wins even with it
+			Minytock.delegate(service1).to(new Object(){public void doWork() {}});
+			service1.doWork();
+		}
+		double proxyMs = (System.currentTimeMillis() - start) / (numCalls * 1.0d);
+		
+		start = System.currentTimeMillis();
+		for (int i = 0; i < numCalls; i++) {
+			new MockUp<Service>() {
+				@Mock
+				public void doWork() {}
+			};
+			service1.doWork();
+		}
+		double jmockitMs = (System.currentTimeMillis() - start) / (numCalls * 1.0d);
+		
+		
+		System.out.println("For repeated calls to new mocks:  ");
+		
+		System.out.println("proxy took " + proxyMs + " ms");
+		
+		System.out.println("jmockit took " + jmockitMs  + " ms");
+		
+		System.out.println("minytock faster than jmockit by " + jmockitMs / proxyMs  + " times");
+	}
+	
+	@Test
 	public void testPerf() {
 		
 		Service service1 = new Service();
@@ -51,34 +85,6 @@ public class PerfTest {
 		
 		System.out.println("minytock faster than jmockit by " + jmockitMs / proxyMs  + " times");
 		
-		
-		Minytock.remove(service1);
-		long start = System.currentTimeMillis();
-		long numCalls = 100;
-		for (int i = 0; i < numCalls; i++) {
-			Minytock.delegate(service1).to(new Object(){public void doWork() {}});
-			service1.doWork();
-		}
-		proxyMs = (System.currentTimeMillis() - start) / (numCalls * 1.0d);
-		
-		start = System.currentTimeMillis();
-		for (int i = 0; i < numCalls; i++) {
-			new MockUp<Service>() {
-				@Mock
-				public void doWork() {}
-			};
-			service1.doWork();
-		}
-		jmockitMs = (System.currentTimeMillis() - start) / (numCalls * 1.0d);
-		
-		
-		System.out.println("For repeated calls to new mocks:  ");
-		
-		System.out.println("proxy took " + proxyMs + " ms");
-		
-		System.out.println("jmockit took " + jmockitMs  + " ms");
-		
-		System.out.println("minytock faster than jmockit by " + jmockitMs / proxyMs  + " times");
 	}
 	
 	private double getMsPerCall(Service service) {
