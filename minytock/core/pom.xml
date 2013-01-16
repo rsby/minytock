@@ -28,6 +28,19 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>com.googlecode.jmockit</groupId>
+			<artifactId>jmockit</artifactId>
+			<version>1.0</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 			<scope>test</scope>
