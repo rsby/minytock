@@ -1,5 +1,7 @@
 package minytock;
 
+import minytock.delegate.DelegationHandlerProviderImpl;
+import minytock.delegate.FastDelegationHandlerCache;
 import mockit.Mock;
 import mockit.MockUp;
 
@@ -21,10 +23,13 @@ public class PerfTest {
 	@Test
 	public void testPerfOneShotMock() {
 		
+		Minytock.provider = new DelegationHandlerProviderImpl(new FastDelegationHandlerCache());
+		Minytock.prepare(new Service());
+		
 		Service service1 = new Service();
 		
 		long start = System.currentTimeMillis();
-		long numCalls = 100;
+		long numCalls = 1;
 		for (int i = 0; i < numCalls; i++) {
 			service1 = Minytock.prepare(new Service()); //really, this wouldn't have to happen for each new mock, but minytock wins even with it
 			Minytock.delegate(service1).to(new Object(){public void doWork() {}});
