@@ -37,10 +37,13 @@ public class MinytockIntegrationTests {
 			
 			@Verify(calls = 2)
 			void test(String msg) {
+				System.out.println("mock");
 				assertEquals(expected, msg);
 			}
 			
 		};
+		
+		System.out.println("mock class" + mock.getClass());
 		
 		delegate(bean).to(mock);
 		
@@ -78,7 +81,7 @@ public class MinytockIntegrationTests {
 			}
 		});
 		
-		bean.test("asdf");
+		bean2.test("asdf");
 		
 		remove(bean);
 		
