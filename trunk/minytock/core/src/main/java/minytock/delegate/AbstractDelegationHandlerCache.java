@@ -2,8 +2,6 @@ package minytock.delegate;
 
 import java.util.Map;
 
-import minytock.util.ProxyUtil;
-
 /**
  * 
  * a base caching class that makes it simple to create new cache implementations without rewriting the common logic
@@ -11,7 +9,7 @@ import minytock.util.ProxyUtil;
  * @author reesbyars
  *
  */
-public abstract class AbstractDelegationCache implements DelegationHandlerCache {
+public abstract class AbstractDelegationHandlerCache implements DelegationHandlerCache {
 	
 	/**
 	 * {@inheritDoc}
@@ -29,11 +27,7 @@ public abstract class AbstractDelegationCache implements DelegationHandlerCache 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> DelegationHandler<T> get(T key) {
-		DelegationHandler<T> handler = (DelegationHandler<T>) getCache().get(getCacheKey(key));
-		if (handler == null && ProxyUtil.isProxyClass(key.getClass())) {
-			
-		}
-		return handler;
+		return (DelegationHandler<T>) getCache().get(getCacheKey(key));
 	}
 	
 	/**
@@ -68,7 +62,7 @@ public abstract class AbstractDelegationCache implements DelegationHandlerCache 
 	 * @return a unique string that can be reliably recreated for this object
 	 */
 	protected static String getCacheKey(Object target) {
-    	return target.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(target));
+    	return target.getClass().getName() + Integer.toHexString(System.identityHashCode(target));
     }
 
 }

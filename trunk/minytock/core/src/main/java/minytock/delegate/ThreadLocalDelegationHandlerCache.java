@@ -10,7 +10,7 @@ import java.util.Map;
  * @author reesbyars
  *
  */
-public class ThreadLocalDelegationHandlerCache extends AbstractDelegationCache {
+public class ThreadLocalDelegationHandlerCache extends AbstractDelegationHandlerCache {
 	
 	private final ThreadLocal<Map<String, DelegationHandler<?>>> handlerCache = new ThreadLocal<Map<String, DelegationHandler<?>>>();
 	
