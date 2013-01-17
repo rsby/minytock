@@ -39,9 +39,12 @@ public class JdkDelegationInterceptor<T> extends AbstractDelegationInterceptor<T
     @Override
     public Object invoke(Object o, Method method, Object[] args) throws Throwable {
     	Object result = null;
-    	Method delegateMethod = this.getDelegateMethod(method);
+    	Method delegateMethod = this.delegateMethodCache.get(method);
         if (delegateMethod != null) {
         	try {
+        		if (this.delegate instanceof InvocationAware) {
+                    ((InvocationAware) this.delegate).notifyInvoked(delegateMethod);
+                }
         		result = delegateMethod.invoke(delegate, args);
         	} catch (InvocationTargetException e) {
         		throw e.getTargetException();

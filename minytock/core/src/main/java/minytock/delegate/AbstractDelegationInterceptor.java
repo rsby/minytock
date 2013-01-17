@@ -43,8 +43,8 @@ public abstract class AbstractDelegationInterceptor<T> implements DelegationInte
         
         if (newDelegateClass != this.delegateClass) {
             this.delegateClass = newDelegateClass;
-            this.delegateMethodCache.clear();
             this.delegateMethodCache = new HashMap<Method, Method>();
+            this.cacheDelegateMethods();
         }
         
         if (delegate instanceof TargetAware) {
@@ -89,35 +89,25 @@ public abstract class AbstractDelegationInterceptor<T> implements DelegationInte
     public Object getDelegate() {
         return this.delegate;
     }
-
-    protected Method getDelegateMethod(Method realMethod) {
-
-        if (this.delegateClass == this.realObjectClass) {
-            return null;
-        }
-
-        Method method = this.delegateMethodCache.get(realMethod);
-        if (!this.delegateMethodCache.containsKey(realMethod)) {
-        	method = realMethod;
+    
+    protected void cacheDelegateMethods() {
+		for (Method realMethod : realObjectClass.getMethods()) {
+			Method method = null;
             String realMethodName = realMethod.getName();
             Class<?>[] realMethodParameterTypes = realMethod.getParameterTypes();
             try {
-                method = this.delegateClass.getMethod(realMethodName, realMethodParameterTypes);
+                method = delegateClass.getMethod(realMethodName, realMethodParameterTypes);
                 method.setAccessible(true);
             } catch (NoSuchMethodException e) {
             	try {
-					method = this.delegateClass.getDeclaredMethod(realMethodName, realMethodParameterTypes);
+					method = delegateClass.getDeclaredMethod(realMethodName, realMethodParameterTypes);
 					method.setAccessible(true);
 				} catch (Exception ee) {
 					//do nuthin
 				} 
             }
-            this.delegateMethodCache.put(realMethod, method);
-        }
-        if (this.delegate instanceof InvocationAware) {
-            ((InvocationAware) this.delegate).notifyInvoked(method);
-        }
-        return method;
+            delegateMethodCache.put(realMethod, method);
+		}
     }
 
 }

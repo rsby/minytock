@@ -23,7 +23,7 @@ public class PerfTest {
 		public void doWork() {}
 	}
 	
-	int numCalls = 100;
+	int numCalls = 1;
 	
 	@Before
 	public void setUp() {

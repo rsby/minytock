@@ -10,11 +10,11 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * an interceptor that uses a cglib enhancer to create proxies.  cglib can proxy just about anything, including concrete classes.
+ * an interceptor that uses a cglib enhancer to create proxies.
  * <P>
  * User: reesbyars
  * Date: 9/11/12
@@ -43,9 +43,12 @@ public class CgLibDelegationInterceptor<T> extends AbstractDelegationInterceptor
     @Override
     public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
     	Object result = null;
-    	Method delegateMethod = this.getDelegateMethod(method);
+    	Method delegateMethod = this.delegateMethodCache.get(method);
         if (delegateMethod != null) {
         	try {
+        		if (this.delegate instanceof InvocationAware) {
+                    ((InvocationAware) this.delegate).notifyInvoked(delegateMethod);
+                }
         		result = delegateMethod.invoke(delegate, args);
         	} catch (InvocationTargetException e) {
         		throw e.getTargetException();
@@ -58,9 +61,8 @@ public class CgLibDelegationInterceptor<T> extends AbstractDelegationInterceptor
         return result;
     }
     
-    static Map<Class<?>, net.sf.cglib.proxy.Factory> factories = new ConcurrentHashMap<Class<?>, net.sf.cglib.proxy.Factory>();
+    static Map<Class<?>, net.sf.cglib.proxy.Factory> factories = new HashMap<Class<?>, net.sf.cglib.proxy.Factory>();
 
-    //net.sf.cglib.proxy.CallbackFilter
     
     /**
      * used by the {@link DelegationInterceptor.Factory} to create instances of this interceptor
@@ -78,22 +80,28 @@ public class CgLibDelegationInterceptor<T> extends AbstractDelegationInterceptor
         	net.sf.cglib.proxy.Factory factory = factories.get(targetInterface);
         	if (factory == null) {
         		factory = (net.sf.cglib.proxy.Factory) Enhancer.create(targetInterface, interceptor);
-        		factories.put(target.getClass(), factory);
+        		synchronized (factories) {
+        			factories.put(target.getClass(), factory);
+        		}
         	}
             interceptor.proxy = (T) factory.newInstance(interceptor);
         } else if (!Modifier.isFinal(target.getClass().getModifiers())) {
         	net.sf.cglib.proxy.Factory factory = factories.get(target.getClass());
         	if (factory == null) {
         		factory = (net.sf.cglib.proxy.Factory) Enhancer.create(target.getClass(), interceptor);
-        		factories.put(target.getClass(), factory);
+        		synchronized (factories) {
+        			factories.put(target.getClass(), factory);
+        		}
         	}
-            interceptor.proxy = (T) factory.newInstance(interceptor);
+            interceptor.proxy = (T) factory.newInstance(interceptor); 
         } else {
             LOG.warn(target.getClass() + " is final, cannot proxy directly.  Proxying super class and implementing all interfaces.  Will work for some cases.  Why a final class?!?!");
             net.sf.cglib.proxy.Factory factory = factories.get(target.getClass().getSuperclass());
         	if (factory == null) {
         		factory = (net.sf.cglib.proxy.Factory) Enhancer.create(target.getClass().getSuperclass(), target.getClass().getInterfaces(), interceptor);
-        		factories.put(target.getClass().getSuperclass(), factory);
+        		synchronized (factories) {
+        			factories.put(target.getClass().getSuperclass(), factory);	
+        		}
         	}
             interceptor.proxy = (T) factory.newInstance(interceptor);
         }

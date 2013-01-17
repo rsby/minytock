@@ -36,7 +36,6 @@ public class MinytockRunner extends BlockJUnit4ClassRunner {
 		return test;
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	protected Statement withBefores(FrameworkMethod frameworkMethod, Object testInstance, Statement statement) {
 		return super.withBefores(frameworkMethod, testInstance, new AfterBefores(statement, assistant, testInstance));
