@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author reesbyars
  *
  */
-public class DefaultDelegationHandlerCache extends AbstractDelegationCache {
+public class DefaultDelegationHandlerCache extends AbstractDelegationHandlerCache {
 	
 	private final Map<String, DelegationHandler<?>> handlerCache = new ConcurrentHashMap<String, DelegationHandler<?>>();
 	

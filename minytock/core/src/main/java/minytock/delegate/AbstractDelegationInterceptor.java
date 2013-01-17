@@ -98,31 +98,19 @@ public abstract class AbstractDelegationInterceptor<T> implements DelegationInte
 
         Method method = this.delegateMethodCache.get(realMethod);
         if (!this.delegateMethodCache.containsKey(realMethod)) {
+        	method = realMethod;
             String realMethodName = realMethod.getName();
             Class<?>[] realMethodParameterTypes = realMethod.getParameterTypes();
             try {
                 method = this.delegateClass.getMethod(realMethodName, realMethodParameterTypes);
                 method.setAccessible(true);
             } catch (NoSuchMethodException e) {
-                for (Method candidateMethod : this.delegateClass.getDeclaredMethods()) {
-                    if (realMethodName.equals(candidateMethod.getName())) {
-                        Class<?>[] candidateMethodParameterTypes =  candidateMethod.getParameterTypes();
-                        if (realMethodParameterTypes.length == candidateMethodParameterTypes.length) {
-                            boolean winner = true;
-                            for (int i = 0; i < realMethodParameterTypes.length; i++) {
-                                if (!realMethodParameterTypes[i].isAssignableFrom(candidateMethodParameterTypes[i])) {
-                                    winner = false;
-                                    break;
-                                }
-                            }
-                            if (winner) {
-                                method = candidateMethod;
-                                method.setAccessible(true);
-                                break;
-                            }
-                        }
-                    }
-                }
+            	try {
+					method = this.delegateClass.getDeclaredMethod(realMethodName, realMethodParameterTypes);
+					method.setAccessible(true);
+				} catch (Exception ee) {
+					//do nuthin
+				} 
             }
             this.delegateMethodCache.put(realMethod, method);
         }
