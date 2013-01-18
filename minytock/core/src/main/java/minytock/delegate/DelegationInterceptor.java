@@ -65,7 +65,7 @@ public interface DelegationInterceptor<T> {
 
         protected static <T> DelegationInterceptor<T> create(T target, Class<?> targetInterface) throws DelegationException {
             if (useCgLib) {
-                return CgLibDelegationInterceptor.create(target, targetInterface);
+            	return CgLibDelegationInterceptor.create(target, targetInterface);
             } else {
                 return JdkDelegationInterceptor.create(target, targetInterface);
             }
