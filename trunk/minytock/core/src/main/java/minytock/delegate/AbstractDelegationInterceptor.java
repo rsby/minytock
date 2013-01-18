@@ -43,7 +43,6 @@ public abstract class AbstractDelegationInterceptor<T> implements DelegationInte
         
         if (newDelegateClass != this.delegateClass) {
             this.delegateClass = newDelegateClass;
-            this.delegateMethodCache = new HashMap<Method, Method>();
             this.cacheDelegateMethods();
         }
         
@@ -61,7 +60,6 @@ public abstract class AbstractDelegationInterceptor<T> implements DelegationInte
     public T removeDelegate() {
         this.delegate = this.realObject;
         this.delegateClass = realObjectClass;
-        this.delegateMethodCache.clear();
         this.delegateMethodCache = Collections.emptyMap();
         return this.proxy;
     }
@@ -91,6 +89,7 @@ public abstract class AbstractDelegationInterceptor<T> implements DelegationInte
     }
     
     protected void cacheDelegateMethods() {
+    	delegateMethodCache = new HashMap<Method, Method>();
 		for (Method realMethod : realObjectClass.getMethods()) {
 			Method method = null;
             String realMethodName = realMethod.getName();

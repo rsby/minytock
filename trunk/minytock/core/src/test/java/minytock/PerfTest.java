@@ -6,6 +6,7 @@ import minytock.delegate.FastDelegationHandlerCache;
 import minytock.delegate.ThreadLocalDelegationHandlerCache;
 import mockit.Mock;
 import mockit.MockUp;
+import net.sf.cglib.proxy.Mixin;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,9 +22,13 @@ public class PerfTest {
 	
 	public static class Service {
 		public void doWork() {}
+		public void blah1() {}
+		public void blah2() {}
+		public void blah3() {}
+		public void blah4() {}
 	}
 	
-	int numCalls = 1;
+	int numCalls = 1000;
 	
 	@Before
 	public void setUp() {
@@ -154,5 +159,7 @@ public class PerfTest {
 		}
 		return (System.currentTimeMillis() - start) / (numCalls * 1.0d);
 	}
+	
+	
 
 }
