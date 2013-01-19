@@ -6,22 +6,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * an abstract delegation interceptor that does everything but intercept
+ * an abstract delegation handler
  * 
  * @author reesbyars
  *
  * @param <T> the type of the target object and the proxy
  */
-public abstract class AbstractDelegationInterceptor<T> implements DelegationInterceptor<T> {
+public abstract class AbstractDelegationHandler<T> implements DelegationHandler<T> {
 
-    protected Map<Method, Method> delegateMethodCache = Collections.emptyMap();
+    protected Map<Integer, Method> delegateMethodCache = Collections.emptyMap();
     protected Class<?> delegateClass;
     protected final Class<?> realObjectClass;
     protected final T realObject;
     protected Object delegate;
     protected T proxy;
 
-    protected AbstractDelegationInterceptor(T realObject) {
+    protected AbstractDelegationHandler(T realObject) {
         this.realObject = realObject;
         this.realObjectClass = realObject.getClass(); 
         this.setDelegate(realObject);
@@ -30,9 +30,49 @@ public abstract class AbstractDelegationInterceptor<T> implements DelegationInte
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
 	@Override
-    public void setDelegate(Object delegate) {
+    public T to(Object delegate) {
+        setDelegate(delegate);
+        return proxy;
+    }
+
+	/**
+     * {@inheritDoc}
+     */
+    @Override
+    public T remove() {
+    	this.delegate = this.realObject;
+        this.delegateClass = realObjectClass;
+        this.delegateMethodCache = Collections.emptyMap();
+        return this.proxy;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public T getProxy() {
+        return proxy;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public T getRealObject() {
+        return realObject;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object getDelegate() {
+        return delegate;
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected final void setDelegate(Object delegate) {
     	
     	if (delegate.equals(this.delegate)) {
         	this.delegate = this.realObject;  //here, if someone tries delegate(bean).to(bean) we set the real object as the delegate to avoid stackoverflow
@@ -52,44 +92,9 @@ public abstract class AbstractDelegationInterceptor<T> implements DelegationInte
         
         this.delegate = delegate;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public T removeDelegate() {
-        this.delegate = this.realObject;
-        this.delegateClass = realObjectClass;
-        this.delegateMethodCache = Collections.emptyMap();
-        return this.proxy;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public T getProxy() {
-        return this.proxy;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public T getRealObject() {
-        return this.realObject;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object getDelegate() {
-        return this.delegate;
-    }
     
-    protected void cacheDelegateMethods() {
-    	delegateMethodCache = new HashMap<Method, Method>();
+    protected final void cacheDelegateMethods() {
+    	delegateMethodCache = new HashMap<Integer, Method>();
 		for (Method realMethod : realObjectClass.getMethods()) {
 			Method method = null;
             String realMethodName = realMethod.getName();
@@ -102,10 +107,10 @@ public abstract class AbstractDelegationInterceptor<T> implements DelegationInte
 					method = delegateClass.getDeclaredMethod(realMethodName, realMethodParameterTypes);
 					method.setAccessible(true);
 				} catch (Exception ee) {
-					//do nuthin
+					method = null;
 				} 
             }
-            delegateMethodCache.put(realMethod, method);
+            delegateMethodCache.put(realMethod.hashCode(), method);
 		}
     }
 

@@ -17,13 +17,13 @@ import java.lang.reflect.Proxy;
  * Date: 9/11/12
  * Time: 10:32 PM
  * <p/>
- * JdkDelegationInterceptor
+ * JdkDelegationHandler
  */
-public class JdkDelegationInterceptor<T> extends AbstractDelegationInterceptor<T> implements InvocationHandler {
+public class JdkDelegationHandler<T> extends AbstractDelegationHandler<T> implements InvocationHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JdkDelegationInterceptor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JdkDelegationHandler.class);
 
-    private JdkDelegationInterceptor(T realObject) {
+    private JdkDelegationHandler(T realObject) {
         super(realObject);
     }
 
@@ -39,7 +39,7 @@ public class JdkDelegationInterceptor<T> extends AbstractDelegationInterceptor<T
     @Override
     public Object invoke(Object o, Method method, Object[] args) throws Throwable {
     	Object result = null;
-    	Method delegateMethod = this.delegateMethodCache.get(method);
+    	Method delegateMethod = this.delegateMethodCache.get(method.hashCode());
         if (delegateMethod != null) {
         	try {
         		if (this.delegate instanceof InvocationAware) {
@@ -68,8 +68,8 @@ public class JdkDelegationInterceptor<T> extends AbstractDelegationInterceptor<T
      * @throws DelegationException
      */
     @SuppressWarnings("unchecked")
-    protected static <T> DelegationInterceptor<T> create(T target, Class<?> targetInterface) throws DelegationException {
-        JdkDelegationInterceptor<T> interceptor = new JdkDelegationInterceptor<T>(target);
+    protected static <T> DelegationHandler<T> create(T target, Class<?> targetInterface) throws DelegationException {
+        JdkDelegationHandler<T> interceptor = new JdkDelegationHandler<T>(target);
         if (targetInterface == null || !targetInterface.isInterface()) {
             Class<?> targetClass = target.getClass();
             try {

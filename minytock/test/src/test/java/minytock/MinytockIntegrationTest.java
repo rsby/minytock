@@ -1,19 +1,37 @@
 package minytock;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Iterator;
+
 import minytock.junit.MinytockRunner;
 import minytock.test.Mock;
 import minytock.test.Ready;
 import minytock.test.Verify;
+import net.sf.cglib.proxy.Mixin;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.objectweb.asm.ClassAdapter;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.commons.RemappingMethodAdapter;
+import org.objectweb.asm.commons.SimpleRemapper;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.MethodNode;
 
 import static minytock.test.MinytockTest.*;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MinytockRunner.class)
-public class MinytockIntegrationTests {
+public class MinytockIntegrationTest {
 	
 	@Ready
 	TestBean bean;
