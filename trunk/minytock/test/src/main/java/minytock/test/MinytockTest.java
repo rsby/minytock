@@ -5,7 +5,7 @@ import minytock.test.EmptyMockFactory;
 import minytock.test.Verifiable;
 
 /**
- * A sort of "static interface" to the MinytockIntegrationTests delegation framework that can be imported into test classes
+ * A sort of "static interface" to the MinytockIntegrationTest delegation framework that can be imported into test classes
  * for simple use of the framework.
  * 
  * <p/>
@@ -14,7 +14,7 @@ import minytock.test.Verifiable;
  * Date: 9/11/12
  * Time: 6:54 PM
  * <p/>
- * MinytockIntegrationTests
+ * MinytockIntegrationTest
  */
 public class MinytockTest extends Minytock {
 

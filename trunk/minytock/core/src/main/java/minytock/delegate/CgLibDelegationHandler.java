@@ -20,13 +20,13 @@ import java.util.Map;
  * Date: 9/11/12
  * Time: 9:50 PM
  * <p/>
- * CgLibDelegationInterceptor
+ * CgLibDelegationHandler
  */
-public class CgLibDelegationInterceptor<T> extends AbstractDelegationInterceptor<T> implements MethodInterceptor {
+public class CgLibDelegationHandler<T> extends AbstractDelegationHandler<T> implements MethodInterceptor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CgLibDelegationInterceptor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CgLibDelegationHandler.class);
 
-    private CgLibDelegationInterceptor(T realObject) {
+    private CgLibDelegationHandler(T realObject) {
         super(realObject);
     }
 
@@ -43,7 +43,7 @@ public class CgLibDelegationInterceptor<T> extends AbstractDelegationInterceptor
     @Override
     public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
     	Object result = null;
-    	Method delegateMethod = this.delegateMethodCache.get(method);
+    	Method delegateMethod = this.delegateMethodCache.get(method.hashCode());
         if (delegateMethod != null) {
         	try {
         		if (this.delegate instanceof InvocationAware) {
@@ -74,8 +74,8 @@ public class CgLibDelegationInterceptor<T> extends AbstractDelegationInterceptor
      * @return
      */
     @SuppressWarnings("unchecked")
-    protected static <T> DelegationInterceptor<T> create(T target, Class<?> targetInterface) {
-        CgLibDelegationInterceptor<T> interceptor = new CgLibDelegationInterceptor<T>(target);
+    protected static <T> DelegationHandler<T> create(T target, Class<?> targetInterface) {
+        CgLibDelegationHandler<T> interceptor = new CgLibDelegationHandler<T>(target);
         if (targetInterface != null) {
         	net.sf.cglib.proxy.Factory factory = factories.get(targetInterface);
         	if (factory == null) {

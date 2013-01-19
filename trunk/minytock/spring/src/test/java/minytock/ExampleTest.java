@@ -49,7 +49,7 @@ public class ExampleTest {
 	@Test
 	public void testAopProxy() {
 		/*
-		MinytockIntegrationTests.provider = new SpringAopDelegationHandlerProvider(Spy.get(DelegationHandlerCache.class).from(provider));
+		MinytockIntegrationTest.provider = new SpringAopDelegationHandlerProvider(Spy.get(DelegationHandlerCache.class).from(provider));
 		
 		TestBean bean = new TestBean();
 		ProxyFactory factory = new ProxyFactory();

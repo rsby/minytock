@@ -37,7 +37,7 @@ public class DelegationHandlerProviderImpl implements DelegationHandlerProvider 
 
     private <T> DelegationHandler<T> getHandler(T target, Class<?> targetInterface) throws DelegationException {
 
-        DelegationHandler<T> handler = cache.get(target); //proxy!!!
+        DelegationHandler<T> handler = cache.get(target);
 
         if (handler == null) {
 
