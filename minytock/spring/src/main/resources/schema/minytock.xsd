@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://code.google.com/p/minytock/schema/spring"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:tool="http://www.springframework.org/schema/tool"
+            targetNamespace="http://code.google.com/p/minytock/schema/spring"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified">
+            
+    <xsd:import namespace="http://www.springframework.org/schema/tool"/>
+
+    <xsd:annotation>
+        <xsd:documentation><![CDATA[
+	Defines a Minytock namespace for use in Spring context files.
+		]]></xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:element name="config">
+        <xsd:annotation>
+            <xsd:documentation>
+                Allows easy configuration of the minytock concerns
+            </xsd:documentation>
+            <xsd:appinfo>
+                <tool:annotation>
+                    <tool:exports type="null" />
+                </tool:annotation>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="config-type"/>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="config-type">
+    	<xsd:sequence>
+        	<xsd:element name="auto-mock" minOccurs="0" maxOccurs="unbounded">
+        		<xsd:annotation>
+		           <xsd:documentation>
+		               Used to indicate that a type should be automatically mocked with an "empty mock"
+		           </xsd:documentation>
+		       </xsd:annotation>
+        		<xsd:complexType>
+		            <xsd:complexContent>
+		                <xsd:extension base="mock-type"/>
+		            </xsd:complexContent>
+		        </xsd:complexType>
+        	</xsd:element>
+        </xsd:sequence> 
+    	<xsd:attribute name="cache-type" type="cache-type" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Specifies the caching mechanism to use.  Allows tweaking for performance, parallel testing, etc.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="aop-compatible" type="xsd:boolean" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    Whether or not minytock should be set to compatibility mode for Spring AOP.  In this mode, minytock will leverage
+                    hot-swappable instances for delegation and generally integrate better with advised beans.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+    
+    <xsd:complexType name="mock-type">
+    	<xsd:attribute name="type" type="xsd:string" use="required">
+           <xsd:annotation>
+               <xsd:documentation source="java:java.lang.Class">
+                   The fully qualified name of the class to be mocked out.
+               </xsd:documentation>
+           </xsd:annotation>
+       </xsd:attribute>
+    </xsd:complexType>
+    
+    <xsd:simpleType name="cache-type">
+    	<xsd:restriction base="xsd:string">
+    		<xsd:enumeration value="default">
+    			<xsd:annotation>
+	                <xsd:documentation>
+	                    The default cache type.  Should be suitable for most cases.  It is high-performance and flexible.  Not suitable for running parallel tests in the same container.
+	                </xsd:documentation>
+            	</xsd:annotation>
+    		</xsd:enumeration>
+    		<xsd:enumeration value="fast">
+    			<xsd:annotation>
+	                <xsd:documentation>
+	                    The fastest cache type.  Greatly reduces the delegation processing overhead.  Useful in cases where delegations and container initializations are frequent.
+	                    However, this cache type allows only one delegate per type, so it is not suitable for classes with multiple implementations.  
+	                    Not suitable for running parallel tests in the same container.
+	                </xsd:documentation>
+            	</xsd:annotation>
+    		</xsd:enumeration>
+    		<xsd:enumeration value="parallel-testing">
+    			<xsd:annotation>
+	                <xsd:documentation>
+	                    A cache type for running parallel integration tests.  Delegations are handled thread-locally, allowing multiple testing threads to
+	                    individually delegate/mock beans and services without muddying each other's waters.
+	                </xsd:documentation>
+            	</xsd:annotation>
+    		</xsd:enumeration>
+    	</xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>
