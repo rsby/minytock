@@ -6,8 +6,10 @@ import minytock.delegate.FastDelegationHandlerCache;
 import minytock.delegate.ThreadLocalDelegationHandlerCache;
 import mockit.Mock;
 import mockit.MockUp;
+import mockit.Mockit;
 import net.sf.cglib.proxy.Mixin;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,13 +30,18 @@ public class PerfTest {
 		public void blah4() {}
 	}
 	
-	int numCalls = 1000;
+	int numCalls = 100;
 	
 	@Before
 	public void setUp() {
 		//Minytock.provider = new DelegationHandlerProviderImpl(new ThreadLocalDelegationHandlerCache());
 		Minytock.provider = new DelegationHandlerProviderImpl(new DefaultDelegationHandlerCache());
 		//Minytock.provider = new DelegationHandlerProviderImpl(new FastDelegationHandlerCache());
+	}
+	
+	@After
+	public void tearDown() {
+		Mockit.tearDownMocks();
 	}
 	
 	@Test
@@ -115,13 +122,14 @@ public class PerfTest {
 	}
 	
 	@Test
-	public void testMockExecutionSpeed() {
+	public void testPartialMockExecutionSpeed_call() {
 		
 		Service service1 = new Service();
 		Service service2 = new Service();
 		
 		service1 = Minytock.prepare(service1);
-		Minytock.delegate(service1).to(service2).doWork();
+		Minytock.delegate(service1).to(new Object(){public void doWork() {}}).doWork();
+		
 		
 		double proxyMs = this.getMsPerCall(service1);
 		double normalMs = this.getMsPerCall(service2);
@@ -135,7 +143,83 @@ public class PerfTest {
 		
 		System.out.println();
 		
-		System.out.println("Mock execution comparison:  ");
+		System.out.println("Mock execution comparison (partial, with call):  ");
+		
+		System.out.println("proxy took " + proxyMs + " ms");
+		
+		System.out.println("normal took " + normalMs  + " ms");
+		
+		System.out.println("mockit took " + jmockitMs  + " ms");
+		
+		System.out.println("minytock slower than plain java by " + proxyMs / normalMs  + " times");
+		
+		System.out.println("jmockit slower than plain java by " + jmockitMs / normalMs  + " times");
+		
+		System.out.println("minytock faster than jmockit by " + jmockitMs / proxyMs  + " times");
+		
+	}
+	
+	@Test
+	public void testPartialMockExecutionSpeed_dontCall() {
+		
+		Service service1 = new Service();
+		Service service2 = new Service();
+		
+		service1 = Minytock.prepare(service1);
+		Minytock.delegate(service1).to(new Object()).doWork();
+		
+		
+		double proxyMs = this.getMsPerCall(service1);
+		double normalMs = this.getMsPerCall(service2);
+		
+		new MockUp<Service>() {
+			@Mock
+			public void doWork() {}
+		};
+		
+		double jmockitMs = this.getMsPerCall(service2);
+		
+		System.out.println();
+		
+		System.out.println("Mock execution comparison (partial, without call):  ");
+		
+		System.out.println("proxy took " + proxyMs + " ms");
+		
+		System.out.println("normal took " + normalMs  + " ms");
+		
+		System.out.println("mockit took " + jmockitMs  + " ms");
+		
+		System.out.println("minytock slower than plain java by " + proxyMs / normalMs  + " times");
+		
+		System.out.println("jmockit slower than plain java by " + jmockitMs / normalMs  + " times");
+		
+		System.out.println("minytock faster than jmockit by " + jmockitMs / proxyMs  + " times");
+		
+	}
+	
+	@Test
+	public void testFullMockExecutionSpeed() {
+		
+		Service service1 = new Service();
+		Service service2 = new Service();
+		
+		service1 = Minytock.prepare(service1);
+		Minytock.delegate(service1).to(new Service(){public void doWork() {}}).doWork();
+		
+		
+		double proxyMs = this.getMsPerCall(service1);
+		double normalMs = this.getMsPerCall(service2);
+		
+		new MockUp<Service>() {
+			@Mock
+			public void doWork() {}
+		};
+		
+		double jmockitMs = this.getMsPerCall(service2);
+		
+		System.out.println();
+		
+		System.out.println("Mock execution comparison (full):  ");
 		
 		System.out.println("proxy took " + proxyMs + " ms");
 		

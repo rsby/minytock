@@ -3,8 +3,6 @@ package minytock.delegate;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import minytock.util.ProxyUtil;
-
 /**
  * a high-performance cache that can be used with a deployed artifact, but not for parallel tests.
  * 
@@ -31,11 +29,7 @@ public class FastDelegationHandlerCache implements DelegationHandlerCache {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> DelegationHandler<T> get(T key) {
-		DelegationHandler<T> handler = (DelegationHandler<T>) handlerCache.get(key.getClass());
-		if (handler == null && ProxyUtil.isProxyClass(key.getClass())) {
-			
-		}
-		return handler;
+		return (DelegationHandler<T>) handlerCache.get(key.getClass());
 	}
 	
 	/**

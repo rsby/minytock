@@ -1,6 +1,5 @@
 package minytock.delegate;
 
-import minytock.util.ProxyUtil;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
@@ -42,6 +41,9 @@ public class CgLibDelegationHandler<T> extends AbstractDelegationHandler<T> impl
      */
     @Override
     public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+    	if (fullDelegate) { //if the delegate is a full instance of the type, then we just use it and save some time
+    		return methodProxy.invoke(delegate, args);
+    	}
     	Object result = null;
     	Method delegateMethod = this.delegateMethodCache.get(method.hashCode());
         if (delegateMethod != null) {
@@ -53,16 +55,13 @@ public class CgLibDelegationHandler<T> extends AbstractDelegationHandler<T> impl
         	} catch (InvocationTargetException e) {
         		throw e.getTargetException();
         	}
-        } else if (ProxyUtil.isProxyClass(delegateClass)) { //this is in order to support the edge case of delegating to another delegated bean
-        	result = methodProxy.invoke(delegate, args);
         } else {
             result = methodProxy.invoke(realObject, args);
         }
         return result;
     }
     
-    static Map<Class<?>, net.sf.cglib.proxy.Factory> factories = new HashMap<Class<?>, net.sf.cglib.proxy.Factory>();
-
+    private static final Map<Class<?>, net.sf.cglib.proxy.Factory> FACTORIES = new HashMap<Class<?>, net.sf.cglib.proxy.Factory>();
     
     /**
      * used by the {@link DelegationInterceptor.Factory} to create instances of this interceptor
@@ -77,30 +76,30 @@ public class CgLibDelegationHandler<T> extends AbstractDelegationHandler<T> impl
     protected static <T> DelegationHandler<T> create(T target, Class<?> targetInterface) {
         CgLibDelegationHandler<T> interceptor = new CgLibDelegationHandler<T>(target);
         if (targetInterface != null) {
-        	net.sf.cglib.proxy.Factory factory = factories.get(targetInterface);
+        	net.sf.cglib.proxy.Factory factory = FACTORIES.get(targetInterface);
         	if (factory == null) {
         		factory = (net.sf.cglib.proxy.Factory) Enhancer.create(targetInterface, interceptor);
-        		synchronized (factories) {
-        			factories.put(target.getClass(), factory);
+        		synchronized (FACTORIES) {
+        			FACTORIES.put(target.getClass(), factory);
         		}
         	}
             interceptor.proxy = (T) factory.newInstance(interceptor);
         } else if (!Modifier.isFinal(target.getClass().getModifiers())) {
-        	net.sf.cglib.proxy.Factory factory = factories.get(target.getClass());
+        	net.sf.cglib.proxy.Factory factory = FACTORIES.get(target.getClass());
         	if (factory == null) {
         		factory = (net.sf.cglib.proxy.Factory) Enhancer.create(target.getClass(), interceptor);
-        		synchronized (factories) {
-        			factories.put(target.getClass(), factory);
+        		synchronized (FACTORIES) {
+        			FACTORIES.put(target.getClass(), factory);
         		}
         	}
             interceptor.proxy = (T) factory.newInstance(interceptor); 
         } else {
             LOG.warn(target.getClass() + " is final, cannot proxy directly.  Proxying super class and implementing all interfaces.  Will work for some cases.  Why a final class?!?!");
-            net.sf.cglib.proxy.Factory factory = factories.get(target.getClass().getSuperclass());
+            net.sf.cglib.proxy.Factory factory = FACTORIES.get(target.getClass().getSuperclass());
         	if (factory == null) {
         		factory = (net.sf.cglib.proxy.Factory) Enhancer.create(target.getClass().getSuperclass(), target.getClass().getInterfaces(), interceptor);
-        		synchronized (factories) {
-        			factories.put(target.getClass().getSuperclass(), factory);	
+        		synchronized (FACTORIES) {
+        			FACTORIES.put(target.getClass().getSuperclass(), factory);	
         		}
         	}
             interceptor.proxy = (T) factory.newInstance(interceptor);
