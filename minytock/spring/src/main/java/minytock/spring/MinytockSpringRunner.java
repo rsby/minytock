@@ -1,8 +1,6 @@
 package minytock.spring;
 
 import minytock.Minytock;
-import minytock.delegate.DelegationHandlerProviderImpl;
-import minytock.delegate.ThreadLocalDelegationHandlerCache;
 import minytock.junit.AfterBefores;
 import minytock.test.ReadyAssistant;
 import minytock.test.Ready;
@@ -20,7 +18,6 @@ public class MinytockSpringRunner extends SpringJUnit4ClassRunner {
 	@SuppressWarnings("unchecked")
 	public MinytockSpringRunner(Class<?> clazz) throws InitializationError {
 		super(clazz);
-		Minytock.provider = new DelegationHandlerProviderImpl(new ThreadLocalDelegationHandlerCache());
 		assistant = new ReadyAssistant(clazz, Ready.class);
 	}
 	

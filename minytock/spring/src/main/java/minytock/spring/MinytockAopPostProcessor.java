@@ -1,9 +1,9 @@
 package minytock.spring;
 
+import java.util.List;
+
 import minytock.Minytock;
 import minytock.delegate.DelegationException;
-import minytock.delegate.DelegationHandlerCache;
-import minytock.spy.Spy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +17,11 @@ import org.springframework.aop.target.HotSwappableTargetSource;
  */
 public class MinytockAopPostProcessor extends DelegationPostProcessor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MinytockAopPostProcessor.class);
-    
-    public MinytockAopPostProcessor() {
-    	Minytock.provider = new SpringAopDelegationHandlerProvider(Spy.get(DelegationHandlerCache.class).from(Minytock.provider));
-    }
+    public MinytockAopPostProcessor(List<String> includeFilters, List<String> excludeFilters) {
+		super(includeFilters, excludeFilters);
+	}
+
+	private static final Logger LOG = LoggerFactory.getLogger(MinytockAopPostProcessor.class);
     
     @Override
     protected Class<?> getTargetClass(Object bean) {

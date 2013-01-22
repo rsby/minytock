@@ -24,6 +24,7 @@
 			<groupId>com.googlecode.minytock</groupId>
 			<artifactId>minytock-test</artifactId>
 			<optional>true</optional>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>

@@ -1,6 +1,7 @@
 package minytock.spring;
 
 import java.lang.reflect.Modifier;
+import java.util.List;
 
 import minytock.Minytock;
 import minytock.delegate.DelegationException;
@@ -9,17 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.util.StringUtils;
+import org.springframework.util.PatternMatchUtils;
 
 /**
- * a utility for automatically preparing of Spring-managed beans for delegation.
- * <p/>
- * Example usage:
- * <pre>
- * &lt;bean class=&quot;minytock.spring.DelegationPostProcessor&quot;&gt;
- *    &lt;property name=&quot;mockablePackages&quot; value=&quot;orb.byars&quot;/&gt;
- * &lt;/bean&gt;
- * </pre>
+ * a utility for automatically preparing Spring-managed beans for delegation.
  * <p/>
  * User: reesbyars
  * Date: 9/11/12
@@ -31,10 +25,12 @@ public class DelegationPostProcessor implements BeanPostProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(DelegationPostProcessor.class);
 
-    private String[] mockablePackages = {""};
-
-    public void setMockablePackages(String mockablePackages) {
-        this.mockablePackages = StringUtils.trimAllWhitespace(mockablePackages).split(",");
+    private String[] includeFilters;
+    private String[] excludeFilters;
+    
+    public DelegationPostProcessor(List<String> includeFilters, List<String> excludeFilters) {
+	     this.includeFilters = includeFilters.toArray(new String[includeFilters.size()]);
+	     this.excludeFilters = excludeFilters.toArray(new String[excludeFilters.size()]);
     }
 
     @Override
@@ -50,20 +46,14 @@ public class DelegationPostProcessor implements BeanPostProcessor {
     	Class<?> targetClass = this.getTargetClass(bean);
     	
     	if (Modifier.isFinal(targetClass.getModifiers())) {
-    		LOG.info("Minytock skipping [" + beanName +  "] as not eligible delegation because its class is final and cannot be proxied");
+    		LOG.info("Minytock skipping [" + beanName +  "] as not eligible for delegation because its class is final and cannot be proxied");
     		return bean;
     	}
     	
-    	boolean doProxy = false;
-        for (String pack : mockablePackages) {
-            if (targetClass.getName().startsWith(pack) && !beanName.endsWith("Test")) {
-                doProxy = true;
-                break;
-            }
-        }
+    	boolean doProxy = PatternMatchUtils.simpleMatch(includeFilters, targetClass.getName()) && !PatternMatchUtils.simpleMatch(excludeFilters, targetClass.getName());
         
         if (!doProxy) {
-        	LOG.info("Minytock skipping [" + beanName +  "] as not eligible delegation");
+        	LOG.info("Minytock skipping [" + beanName + "] as not eligible for delegation");
         	return bean;
         }
         
