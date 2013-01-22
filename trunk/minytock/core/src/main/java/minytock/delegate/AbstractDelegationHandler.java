@@ -20,6 +20,7 @@ public abstract class AbstractDelegationHandler<T> implements DelegationHandler<
     protected final T realObject;
     protected Object delegate;
     protected T proxy;
+    protected boolean fullDelegate;
 
     protected AbstractDelegationHandler(T realObject) {
         this.realObject = realObject;
@@ -83,7 +84,10 @@ public abstract class AbstractDelegationHandler<T> implements DelegationHandler<
         
         if (newDelegateClass != this.delegateClass) {
             this.delegateClass = newDelegateClass;
-            this.cacheDelegateMethods();
+            fullDelegate = realObjectClass.isAssignableFrom(delegateClass);
+            if (!fullDelegate) {
+            	this.cacheDelegateMethods(); //no need to cash them if we can cast the delegate to the real object type
+            }
         }
         
         if (delegate instanceof TargetAware) {
