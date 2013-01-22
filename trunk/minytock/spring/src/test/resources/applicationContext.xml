@@ -13,6 +13,6 @@
     
     <bean class="minytock.SomeOtherService"/>
     
-    <bean class="minytock.spring.DelegationPostProcessor"/>
+    <minytock:config cache-type="default" aop-compatible="false"/>
 	
 </beans>

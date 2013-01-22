@@ -1,35 +1,28 @@
 package minytock.spring;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.util.StringUtils;
 
 /**
- * a utility for auto-empty-mocking of Spring beans (useful when all you have available is an interface).
- * <p/>
- * Example usage:
- * <pre>
- * &lt;bean class=&quot;minytock.spring.EmptyMockFactoryPostProcessor&quot;&gt;
- *    &lt;property name=&quot;emptyMockClasses&quot; value=&quot;org.byars.SomeService, org.byars.SomeOtherService&quot;/&gt;
- * &lt;/bean&gt;
- * </pre>
  * <p/>
  * 
  * @author reesbyars
  *
  */
-public class EmptyMockFactoryPostProcessor implements BeanFactoryPostProcessor {
+public class MinytockFactoryPostProcessor implements BeanFactoryPostProcessor {
 	
-	private static final Logger LOG = LoggerFactory.getLogger(EmptyMockFactoryPostProcessor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MinytockFactoryPostProcessor.class);
 	
-	private String[] emptyMockClasses = {};
+	private List<String> emptyMockClasses;
 
-    public void setEmptyMockClasses(String emptyMockClasses) {
-        this.emptyMockClasses = StringUtils.trimAllWhitespace(emptyMockClasses).split(",");
+    public MinytockFactoryPostProcessor(List<String> emptyMockClasses) {
+        this.emptyMockClasses = emptyMockClasses;
     }
 	
 	@Override

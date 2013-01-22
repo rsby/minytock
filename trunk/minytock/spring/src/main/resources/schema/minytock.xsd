@@ -21,7 +21,7 @@
             </xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
-                    <tool:exports type="null" />
+                    <tool:exports type="org.springframework.beans.factory.config.BeanFactoryPostProcessor" />
                 </tool:annotation>
             </xsd:appinfo>
         </xsd:annotation>
@@ -34,6 +34,30 @@
 
     <xsd:complexType name="config-type">
     	<xsd:sequence>
+			<xsd:element name="include-filter" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation><![CDATA[
+Controls which eligible types to include for minytock delegation preparation.
+						]]></xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+		            <xsd:complexContent>
+		                <xsd:extension base="filter-type"/>
+		            </xsd:complexContent>
+		        </xsd:complexType>
+			</xsd:element>
+			<xsd:element name="exclude-filter" minOccurs="0" maxOccurs="unbounded">
+				<xsd:annotation>
+					<xsd:documentation><![CDATA[
+Controls which eligible types to exclude for minytock delegation preparation.
+					]]></xsd:documentation>
+				</xsd:annotation>
+				<xsd:complexType>
+		            <xsd:complexContent>
+		                <xsd:extension base="filter-type"/>
+		            </xsd:complexContent>
+		        </xsd:complexType>
+			</xsd:element>
         	<xsd:element name="auto-mock" minOccurs="0" maxOccurs="unbounded">
         		<xsd:annotation>
 		           <xsd:documentation>
@@ -69,6 +93,16 @@
            <xsd:annotation>
                <xsd:documentation source="java:java.lang.Class">
                    The fully qualified name of the class to be mocked out.
+               </xsd:documentation>
+           </xsd:annotation>
+       </xsd:attribute>
+    </xsd:complexType>
+    
+    <xsd:complexType name="filter-type">
+    	<xsd:attribute name="expression" type="xsd:string" use="required">
+           <xsd:annotation>
+               <xsd:documentation>
+           An expression to be matched using the standard Spring wildcard processing, e.g. an expression in the form "xxx*", "*xxx", "*xxx*" and "xxx*yyy" 
                </xsd:documentation>
            </xsd:annotation>
        </xsd:attribute>
