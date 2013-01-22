@@ -13,6 +13,6 @@
     
     <bean class="minytock.SomeOtherService"/>
     
-    <minytock:config cache-type="default" aop-compatible="false"/>
+    <minytock:config cache-type="default" aop-compatibility-mode="off"/>
 	
 </beans>
