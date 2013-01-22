@@ -35,10 +35,10 @@ public class MinytockSpringConfigParser implements BeanDefinitionParser {
 			cache = new DefaultDelegationHandlerCache();
 		}
 		
-		String aopMode = element.getAttribute("aop-compatible");
+		String aopMode = element.getAttribute("aop-compatibility-mode");
 		DelegationHandlerProvider provider = null;
 		String postProcessorName = null;
-		if ("true".equals(aopMode)) {
+		if ("on".equals(aopMode)) {
 			provider = new SpringAopDelegationHandlerProvider(cache);
 			postProcessorName = "minytock.spring.MinytockAopPostProcessor";
 		} else {

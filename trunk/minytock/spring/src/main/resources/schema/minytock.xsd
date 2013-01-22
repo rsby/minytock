@@ -21,7 +21,7 @@
             </xsd:documentation>
             <xsd:appinfo>
                 <tool:annotation>
-                    <tool:exports type="org.springframework.beans.factory.config.BeanFactoryPostProcessor" />
+                    <tool:exports type="null" />
                 </tool:annotation>
             </xsd:appinfo>
         </xsd:annotation>
@@ -78,7 +78,7 @@ Controls which eligible types to exclude for minytock delegation preparation.
                 </xsd:documentation>
             </xsd:annotation>
         </xsd:attribute>
-        <xsd:attribute name="aop-compatible" type="xsd:boolean" use="required">
+        <xsd:attribute name="aop-compatibility-mode" type="switch-type" use="required">
             <xsd:annotation>
                 <xsd:documentation>
                     Whether or not minytock should be set to compatibility mode for Spring AOP.  In this mode, minytock will leverage
@@ -132,6 +132,23 @@ Controls which eligible types to exclude for minytock delegation preparation.
 	                    A cache type for running parallel integration tests.  Delegations are handled thread-locally, allowing multiple testing threads to
 	                    individually delegate/mock beans and services without muddying each other's waters.
 	                </xsd:documentation>
+            	</xsd:annotation>
+    		</xsd:enumeration>
+    	</xsd:restriction>
+    </xsd:simpleType>
+    
+    <xsd:simpleType name="switch-type">
+    	<xsd:restriction base="xsd:string">
+    		<xsd:enumeration value="on">
+    			<xsd:annotation>
+	                <xsd:documentation>
+	                    Turn this feature on</xsd:documentation>
+            	</xsd:annotation>
+    		</xsd:enumeration>
+    		<xsd:enumeration value="off">
+    			<xsd:annotation>
+	                <xsd:documentation>
+	                    Turn this feature off</xsd:documentation>
             	</xsd:annotation>
     		</xsd:enumeration>
     	</xsd:restriction>
