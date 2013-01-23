@@ -3,9 +3,9 @@ package minytock;
 import minytock.delegate.DelegationHandlerCache;
 import minytock.spring.MinytockSpringRunner;
 import minytock.spring.SpringAopDelegationHandlerProvider;
-import minytock.spy.Spy;
 import minytock.test.Mock;
 import minytock.test.Ready;
+import minytock.test.Spy;
 import minytock.test.Verify;
 
 import org.junit.Test;

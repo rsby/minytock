@@ -1,6 +1,7 @@
 package minytock.test;
 
 import minytock.Minytock;
+import minytock.delegate.DelegationException;
 import minytock.test.EmptyMockFactory;
 import minytock.test.Verifiable;
 
@@ -36,6 +37,26 @@ public class MinytockTest extends Minytock {
      */
     public static <T> T newEmptyMock(Class<T> classToMock) {
         return EmptyMockFactory.create(classToMock);
+    }
+    
+    /**
+     * @param value a value to set
+     * @return a {@link Spy.Infiltrator} that can set the given value on a target
+     */
+    public static <T> Spy.Infiltrator set(T value) {
+    	try {
+    		return Spy.set(value);
+    	} catch (DelegationException e) {
+    		throw new RuntimeException(e);
+    	}
+    }
+
+    /**
+     * @param classToGet the class of the field to retrieve
+     * @return a {@link Spy.Hijacker} that can retrieve the field from a target
+     */
+    public static <T> Spy.Hijacker<T> get(Class<T> classToGet) {
+        return Spy.get(classToGet);
     }
 
 }

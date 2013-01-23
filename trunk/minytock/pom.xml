@@ -62,6 +62,7 @@
 		<module>core</module>
 		<module>spring</module>
 		<module>test</module>
+		<module>minytock-maven-plugin</module>
 	</modules>
 	
 	<dependencyManagement>
