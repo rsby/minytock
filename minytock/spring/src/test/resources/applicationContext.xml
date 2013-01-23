@@ -6,13 +6,15 @@
        		http://www.springframework.org/schema/beans 
            http://www.springframework.org/schema/beans/spring-beans.xsd
            http://code.google.com/p/minytock/schema/spring
-           http://code.google.com/p/minytock/schema/spring/minytock.xsd">
+           https://minytock.googlecode.com/svn/trunk/minytock/spring/src/main/resources/schema/minytock.xsd">
 	
     
     <bean class="minytock.SomeService"/>
     
     <bean class="minytock.SomeOtherService"/>
     
-    <minytock:config cache-type="default" aop-compatibility-mode="off"/>
+    <minytock:config cache-type="default" aop-compatibility-mode="on">
+    	<minytock:auto-mock type=""/>
+    </minytock:config>
 	
 </beans>

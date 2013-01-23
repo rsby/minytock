@@ -1,7 +1,6 @@
 package minytock;
 
 import minytock.delegate.*;
-import minytock.spy.Spy;
 
 /**
  * A sort of "static interface" to the Minytock delegation framework that can be imported into test classes
@@ -94,26 +93,6 @@ public class Minytock {
      */
     public static void clearDelegates() {
     	provider.removeAllDelegates();
-    }
-
-    /**
-     * @param value a value to set
-     * @return a {@link Spy.Infiltrator} that can set the given value on a target
-     */
-    public static <T> Spy.Infiltrator set(T value) {
-    	try {
-    		return Spy.set(value);
-    	} catch (DelegationException e) {
-    		throw new RuntimeException(e);
-    	}
-    }
-
-    /**
-     * @param classToGet the class of the field to retrieve
-     * @return a {@link Spy.Hijacker} that can retrieve the field from a target
-     */
-    public static <T> Spy.Hijacker<T> get(Class<T> classToGet) {
-        return Spy.get(classToGet);
     }
 
 }

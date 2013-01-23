@@ -1,4 +1,4 @@
-package minytock.spy;
+package minytock.test;
 
 import minytock.Minytock;
 import minytock.delegate.DelegationException;
