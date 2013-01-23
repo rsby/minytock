@@ -26,7 +26,9 @@ public class MinytockMojo extends AbstractMojo {
 	public void execute() throws MojoExecutionException {
     	if ("true".equals(executionFlag)) {
     		getLog().info( "executing minytock mojo" );
-            Artifact artifact = artifactFactory.createArtifact("com.googlecode.minytock", "minytock-core", "0.0.1-BETA-SNAPSHOT", "compile", "jar");
+    		String version = getClass().getPackage().getImplementationVersion();
+    		getLog().info("minytock version - " + version);
+            Artifact artifact = artifactFactory.createArtifact("com.googlecode.minytock", "minytock-core", version, "compile", "jar");
             this.project.getDependencyArtifacts().add(artifact);
             getLog().info( "completed minytock mojo" );
     	} else {
