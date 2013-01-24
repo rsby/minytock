@@ -30,8 +30,12 @@ public class MinytockPostWarMojo extends AbstractMojo {
 	@Parameter(property = "minytock.deploy", defaultValue = "false")
 	private boolean deploy;
 	
-	@Parameter(defaultValue="${project.build.directory}/${project.build.finalName}/WEB-INF/web.xml")
-	private File explodedWebXml;
+	@Parameter(property = "minytock-post-war.bundleFileName")
+	private String[] bundleFileNames;
+	
+	@Parameter(defaultValue="${project.build.directory}/${project.build.finalName}")
+	private String explodedWebModuleDir;
+	
     
 	public void execute() throws MojoExecutionException {
 		
@@ -39,7 +43,15 @@ public class MinytockPostWarMojo extends AbstractMojo {
     		
     		try {
     			getLog().info( "adding minytock-context.xml to the context locations in the web.xml in the exploded directory");
-				this.modifyDeploymentDescriptor(this.explodedWebXml);
+    			if (this.bundleFileNames != null && this.bundleFileNames.length > 0) {
+    				getLog().info( "bundle file name provided in configuration, proceeding with EAR configuration");
+    				for (String bundleFileName : this.bundleFileNames) {
+    					this.modifyDeploymentDescriptor(new File(this.explodedWebModuleDir + "/" + bundleFileName + "/WEB-INF/web.xml"));
+    				}
+    			} else {
+    				getLog().info( "no bundle file name provided in configuration, proceeding with WAR configuration.  provide bundle file name in plugin configuration if this is an EAR project.");
+    				this.modifyDeploymentDescriptor(new File(this.explodedWebModuleDir + "/WEB-INF/web.xml"));
+    			}
 			} catch (Exception e) {
 				throw new MojoExecutionException("there was an exception while modifying the web.xml to include the minytock Spring config", e);
 			} 
@@ -62,7 +74,7 @@ public class MinytockPostWarMojo extends AbstractMojo {
         		Node paramChild = paramChildren.item(ii);
         		if ("param-name".equals(paramChild.getNodeName()) && "contextConfigLocation".equals(paramChild.getTextContent())) {
         			Node paramValue = paramChildren.item(ii + 2);
-        			paramValue.setTextContent(paramValue.getTextContent() + ", classpath:*minytock-context.xml");
+        			paramValue.setTextContent(paramValue.getTextContent() + ", classpath:/context/minytock-context.xml");
         			break;
         		}
         	}
