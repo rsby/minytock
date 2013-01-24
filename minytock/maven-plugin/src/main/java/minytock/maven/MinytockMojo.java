@@ -1,5 +1,7 @@
 package minytock.maven;
 
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.plugin.AbstractMojo;
@@ -53,9 +55,15 @@ public class MinytockMojo extends AbstractMojo {
     protected void addJars() {
 		if (addJars) {
 			getLog().info( "adding jars..." );
-			Artifact artifact = artifactFactory.createArtifact("com.googlecode.minytock", "minytock-core", version, "compile", "jar");
-	        this.project.getDependencyArtifacts().add(artifact);
+			Set<Artifact> artifacts = this.project.getDependencyArtifacts();
+			artifacts.add(getArtifact("minytock-core"));
+			artifacts.add(getArtifact("minytock-spring"));
+			artifacts.add(getArtifact("minytock-ui"));
 		}
     }
+	
+	public Artifact getArtifact(String id) {
+		return artifactFactory.createArtifact("com.googlecode.minytock", id, version, "compile", "jar");
+	}
 	
 }
