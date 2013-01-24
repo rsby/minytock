@@ -58,7 +58,6 @@ public class MinytockMojo extends AbstractMojo {
 			Set<Artifact> artifacts = this.project.getDependencyArtifacts();
 			artifacts.add(getArtifact("minytock-core"));
 			artifacts.add(getArtifact("minytock-spring"));
-			artifacts.add(getArtifact("minytock-ui"));
 		}
     }
 	
