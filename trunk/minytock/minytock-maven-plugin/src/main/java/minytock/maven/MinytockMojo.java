@@ -27,11 +27,10 @@ public class MinytockMojo extends AbstractMojo {
 	
 	@Component
     private ArtifactFactory artifactFactory;  
-	
     
 	public void execute() throws MojoExecutionException {
+		
     	if (deploy) {
-    		getLog().info( "executing minytock mojo");
     		
     		this.resolveVersion();
     		this.addJars();
@@ -40,6 +39,7 @@ public class MinytockMojo extends AbstractMojo {
     	} else {
     		getLog().info( "skipping minytock mojo" );
     	}
+    	
     }
 	
 	protected void resolveVersion() {
@@ -57,4 +57,5 @@ public class MinytockMojo extends AbstractMojo {
 	        this.project.getDependencyArtifacts().add(artifact);
 		}
     }
+	
 }
