@@ -14,7 +14,6 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -24,42 +23,38 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-@Mojo(name="minytock-post-war", defaultPhase=LifecyclePhase.INSTALL)
-public class MinytockPostWarMojo extends AbstractMojo {
+/**
+ * 
+ * @author reesbyars
+ *
+ */
+@Mojo(name="minytock-config", defaultPhase=LifecyclePhase.INSTALL)
+public class MinytockConfigMojo extends AbstractMinytockMojo {
 	
-	@Parameter(property = "minytock.deploy", defaultValue = "false")
-	private boolean deploy;
-	
-	@Parameter(property = "minytock-post-war.bundleFileName")
+	@Parameter
 	private String[] bundleFileNames;
 	
 	@Parameter(defaultValue="${project.build.directory}/${project.build.finalName}")
 	private String explodedWebModuleDir;
-	
     
-	public void execute() throws MojoExecutionException {
+	public void doMojo() throws Exception {
 		
-    	if (deploy) {
-    		
-    		try {
-    			getLog().info( "adding minytock-context.xml to the context locations in the web.xml in the exploded directory");
-    			if (this.bundleFileNames != null && this.bundleFileNames.length > 0) {
-    				getLog().info( "bundle file name provided in configuration, proceeding with EAR configuration");
-    				for (String bundleFileName : this.bundleFileNames) {
-    					this.modifyDeploymentDescriptor(new File(this.explodedWebModuleDir + "/" + bundleFileName + "/WEB-INF/web.xml"));
-    				}
-    			} else {
-    				getLog().info( "no bundle file name provided in configuration, proceeding with WAR configuration.  provide bundle file name in plugin configuration if this is an EAR project.");
-    				this.modifyDeploymentDescriptor(new File(this.explodedWebModuleDir + "/WEB-INF/web.xml"));
-    			}
-			} catch (Exception e) {
-				throw new MojoExecutionException("there was an exception while modifying the web.xml to include the minytock Spring config", e);
-			} 
-            
-            getLog().info( "completed minytock post-war mojo" );
-    	} else {
-    		getLog().info( "skipping minytock post-war mojo" );
-    	}
+		try {
+			getLog().info( "adding minytock-context.xml to the context locations in the web.xml in the exploded directory");
+			if (this.bundleFileNames != null && this.bundleFileNames.length > 0) {
+				getLog().info( "bundle file name provided in configuration, proceeding with EAR configuration");
+				for (String bundleFileName : this.bundleFileNames) {
+					this.modifyDeploymentDescriptor(new File(this.explodedWebModuleDir + "/" + bundleFileName + "/WEB-INF/web.xml"));
+				}
+			} else {
+				getLog().info( "no bundle file name provided in configuration, proceeding with WAR configuration.  provide bundle file name in plugin configuration if this is an EAR project.");
+				this.modifyDeploymentDescriptor(new File(this.explodedWebModuleDir + "/WEB-INF/web.xml"));
+			}
+		} catch (Exception e) {
+			throw new MojoExecutionException("there was an exception while modifying the web.xml to include the minytock Spring config", e);
+		} 
+        
+        getLog().info( "completed minytock-config mojo" );
     	
     }
 	

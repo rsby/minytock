@@ -1,4 +1,4 @@
-package minytock.ui;
+package minytock.spring;
 
 public class BeanInfo {
 	
