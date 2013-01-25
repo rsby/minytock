@@ -38,9 +38,6 @@ import org.w3c.dom.NodeList;
 @Mojo(name = "minytock", defaultPhase = LifecyclePhase.INSTALL)
 public class MinytockMojo extends AbstractMojo {
 	
-	@Parameter(property = "minytock.enabled", defaultValue = "false")
-	private boolean enabled;
-	
 	@Parameter(property = "minytock.deployThisJar", defaultValue = "true")
 	private boolean deployThisJar;
 	
@@ -81,15 +78,11 @@ public class MinytockMojo extends AbstractMojo {
     protected ArtifactResolver artifactResolver;
 	
 	public final void execute() throws MojoExecutionException {
-    	if (enabled) {
-    		try {
-				this.doMojo();
-			} catch (Exception e) {
-				throw new MojoExecutionException("error while performing minytock mojo", e);
-			}
-    	} else {
-    		this.getLog().info("skipping the minytock mojo.  run with -Dminytock.enabled=true to enable");
-    	}
+		try {
+			this.doMojo();
+		} catch (Exception e) {
+			throw new MojoExecutionException("error while performing minytock mojo", e);
+		}
 	}
     
 	public void doMojo() throws Exception {
