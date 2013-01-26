@@ -107,10 +107,8 @@ public class MinytockMojo extends AbstractMojo {
 			appType = "war";
 		} else if ("ear".equals(appType) || "war".equals(appType)) {
 			baseDir = this.explodedDir;
-		} else if ("jar".equals(appType)){
-			throw new MinytockMojoException("for projects of type [jar], either the earDir or warDir must be specified in the minytock plugin configuration", new NullPointerException());
 		} else {
-			throw new MinytockMojoException("project must be of type ear, war, or jar when executing the minytock mojo");
+			throw new MinytockMojoException("for projects not of type [ear] or [war], either the earDir or warDir must be specified in the minytock plugin configuration", new NullPointerException());
 		}
 		
 		//establish the lib dir
@@ -166,12 +164,13 @@ public class MinytockMojo extends AbstractMojo {
 		
 		artifactResolver.resolve(artifact, remoteRepositories, localRepository);
 		
+		String dest = destinationDir + "/" + artifact.getArtifactId() + "." + artifact.getType();
+		this.getLog().info("copying " + artifact.toString() + " to " + dest);
+		
 		FileInputStream fis = null;
 		FileOutputStream fos = null;
 		
 		try {
-			String dest = destinationDir + "/" + artifact.getArtifactId() + "." + artifact.getType();
-			this.getLog().info("copying " + artifact.toString() + " to " + dest);
 			fis = new FileInputStream(artifact.getFile());
 			File destination = new File(dest);
 			fos = new FileOutputStream(destination);
