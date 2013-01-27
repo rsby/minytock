@@ -11,12 +11,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value="/minytock")
-public class MinytockController {
+public class DashboardController {
+	
+	@RequestMapping(method = RequestMethod.GET, value = "show")
+	public String show() {
+		System.out.println("loading dashboard...");
+		return "dashboard";
+	}
 	
 	@ResponseBody
-    @RequestMapping(method = RequestMethod.POST, value="/eligibleBeans" )
-	public Map<String, BeanInfo> getEligibleBeans() {
+    @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, value="eligibleBeans")
+	public Map<String, BeanInfo> eligibleBeans() {
 		return StaticBeanAccessor.getInfos();
 	}
 
