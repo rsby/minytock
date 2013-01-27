@@ -4,6 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<artifactId>minytock-ui</artifactId>
+	<packaging>war</packaging>
 	
 	<name>minytock-ui</name>
 	<description>spring mvc ui for dynamic mocking in local application deployments</description>
@@ -35,13 +36,11 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
-			<scope>provided</scope>
 		</dependency>
 
 	</dependencies>

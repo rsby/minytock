@@ -90,7 +90,7 @@ public class MinytockMojo extends AbstractMojo {
 		//deploy the war
 		if (autoDeployDirectory != null) {
 			this.getLog().info("deploying the minytock war");
-			Artifact war = artifactFactory.createArtifact("com.googlecode.minytock", "minytock-ui", version, "compile", "jar");
+			Artifact war = artifactFactory.createArtifact("com.googlecode.minytock", "minytock-ui", version, "compile", "war");
 			this.placeArtifact(autoDeployDirectory, war);
 		} else {
 			throw new MinytockMojoException("the autoDeployDirectory must be specified in the minytock plugin configuration", new NullPointerException());
