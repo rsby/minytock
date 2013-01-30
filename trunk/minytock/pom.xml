@@ -85,6 +85,11 @@
 				<artifactId>minytock-spring</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.googlecode.minytock</groupId>
+				<artifactId>minytock-ui</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 		
 			<dependency>
 				<groupId>cglib</groupId>
