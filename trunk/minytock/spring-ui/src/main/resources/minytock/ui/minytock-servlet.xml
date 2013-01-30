@@ -15,9 +15,9 @@
 	
 	<context:component-scan base-package="minytock"/>
 
-	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<bean id="minyTockViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix">
-			<value>/WEB-INF/pages/</value>
+			<value>/minytock/ui/pages/</value>
 		</property>
 		<property name="suffix">
 			<value>.jsp</value>
