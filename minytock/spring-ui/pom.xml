@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<artifactId>minytock-ui</artifactId>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	
 	<name>minytock-ui</name>
 	<description>spring mvc ui for dynamic mocking in local application deployments</description>
@@ -25,11 +25,22 @@
 		<dependency>
 			<groupId>com.googlecode.minytock</groupId>
 			<artifactId>minytock-spring</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
 		</dependency>
 		
 		<dependency>

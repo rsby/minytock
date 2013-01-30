@@ -27,6 +27,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -43,9 +44,6 @@ public class MinytockMojo extends AbstractMojo {
 	
 	@Parameter(property = "minytock.version")
 	protected String version = getClass().getPackage().getImplementationVersion();
-	
-	@Parameter(property = "minytock.autoDeployDirectory")
-	private String autoDeployDirectory;
 	
 	@Parameter(property = "minytock.dependencies")
 	private Dependency[] dependencies;
@@ -68,6 +66,9 @@ public class MinytockMojo extends AbstractMojo {
 	@Parameter
 	private String[] bundleFileNames;
 	
+	@Parameter
+	private List<PropertyModifier> propertyModifiers;
+	
 	@Component
     private MavenProject project;
 	
@@ -86,15 +87,6 @@ public class MinytockMojo extends AbstractMojo {
 	}
     
 	public void doMojo() throws Exception {
-		
-		//deploy the war
-		if (autoDeployDirectory != null) {
-			this.getLog().info("deploying the minytock war");
-			Artifact war = artifactFactory.createArtifact("com.googlecode.minytock", "minytock-ui", version, "compile", "war");
-			this.placeArtifact(autoDeployDirectory, war);
-		} else {
-			throw new MinytockMojoException("the autoDeployDirectory must be specified in the minytock plugin configuration", new NullPointerException());
-		}
 		
 		//establish the app type and base dir
 		String appType = project.getPackaging();
@@ -121,6 +113,7 @@ public class MinytockMojo extends AbstractMojo {
 		
 		//add the minytock jars to the exploded lib dir
 		this.getLog().info("adding the minytock jars");
+		this.placeArtifact(libDir, "minytock-ui", version);
 		this.placeArtifact(libDir, "minytock-core", version);
 		this.placeArtifact(libDir, "minytock-spring", version);
 		
@@ -147,6 +140,11 @@ public class MinytockMojo extends AbstractMojo {
 			}
 		} else {
 			this.modifyDeploymentDescriptor(new File(baseDir + "/WEB-INF/web.xml"));
+		}
+		
+		//execute the property modifiers
+		for (PropertyModifier modifier : this.propertyModifiers) {
+			modifier.execute(baseDir);
 		}
 		
     }
@@ -185,9 +183,12 @@ public class MinytockMojo extends AbstractMojo {
 	}
 	
 	protected void modifyDeploymentDescriptor(File webXml) throws TransformerFactoryConfigurationError, Exception {
+		
 		this.getLog().info("editing the web.xml at " + webXml.getPath());
+		
 		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = builder.parse(webXml);
+        
         NodeList contextParamNodes = doc.getElementsByTagName("context-param");
         for (int i = 0; i < contextParamNodes.getLength(); i++) {
         	Node contextParam = contextParamNodes.item(i);
@@ -201,6 +202,12 @@ public class MinytockMojo extends AbstractMojo {
         		}
         	}
         }
+        
+        Element webApp = (Element) doc.getElementsByTagName("web-app").item(0);
+       
+        this.addServlet(doc, webApp);
+        
+        
 		Transformer transformer = TransformerFactory.newInstance().newTransformer();
 		DOMSource source = new DOMSource(doc);
 		FileOutputStream os = null;
@@ -213,6 +220,43 @@ public class MinytockMojo extends AbstractMojo {
 		} finally {
 			IOUtils.closeQuietly(os);
 		}
+	}
+	
+	protected void addServlet(Document doc, Element webApp) {
+	
+		Element servlet = doc.createElement("servlet");
+	    
+	    Element servletName = doc.createElement("servlet-name");
+	    servletName.setTextContent("minytock");
+	    servlet.appendChild(servletName);
+	    
+	    Element servletClass = doc.createElement("servlet-class");
+	    servletClass.setTextContent("org.springframework.web.servlet.DisptcherServlet");
+	    servlet.appendChild(servletClass);
+	    
+	    Element initParam = doc.createElement("init-param");
+	    servlet.appendChild(initParam);
+	    
+	    Element paramName = doc.createElement("param-name");
+	    paramName.setTextContent("contextConfigLocation");
+	    initParam.appendChild(paramName);
+	    
+	    Element paramValue = doc.createElement("param-value");
+	    paramValue.setTextContent("classpath*:*/minytock/ui/minytock-servlet.xml");
+	    initParam.appendChild(paramValue);
+	    
+	    Element servletMapping = doc.createElement("servlet-mapping");
+	    
+	    Element servletNameRef = doc.createElement("servlet-name");
+	    servletNameRef.setTextContent("minytock");
+	    servletMapping.appendChild(servletNameRef);
+	    
+	    Element servletUrlPattern = doc.createElement("url-pattern");
+	    servletUrlPattern.setTextContent("/minytock/*");
+	    servletMapping.appendChild(servletUrlPattern);
+    
+	    webApp.appendChild(servlet);
+		
 	}
 	
 }
