@@ -17,7 +17,7 @@
 
 	<bean id="minyTockViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix">
-			<value>/minytock/ui/pages/</value>
+			<value>/WEB-INF/minytock/</value>
 		</property>
 		<property name="suffix">
 			<value>.jsp</value>

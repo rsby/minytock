@@ -3,6 +3,8 @@ package minytock.maven;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -134,12 +136,14 @@ public class MinytockMojo extends AbstractMojo {
 			if (this.bundleFileNames != null && this.bundleFileNames.length > 0) {
 				for (String bundleFileName : this.bundleFileNames) {
 					this.modifyDeploymentDescriptor(new File(baseDir + "/" + bundleFileName + "/WEB-INF/web.xml"));
+					this.placeJSPs(baseDir + "/" + bundleFileName);
 				}
 			} else {
 				throw new MinytockMojoException("for projects of type [ear], at least one bundleFileName must be specified in the minytock plugin configuration", new NullPointerException());
 			}
 		} else {
 			this.modifyDeploymentDescriptor(new File(baseDir + "/WEB-INF/web.xml"));
+			this.placeJSPs(baseDir);
 		}
 		
 		//execute the property modifiers
@@ -231,7 +235,7 @@ public class MinytockMojo extends AbstractMojo {
 	    servlet.appendChild(servletName);
 	    
 	    Element servletClass = doc.createElement("servlet-class");
-	    servletClass.setTextContent("org.springframework.web.servlet.DisptcherServlet");
+	    servletClass.setTextContent("org.springframework.web.servlet.DispatcherServlet");
 	    servlet.appendChild(servletClass);
 	    
 	    Element initParam = doc.createElement("init-param");
@@ -242,7 +246,7 @@ public class MinytockMojo extends AbstractMojo {
 	    initParam.appendChild(paramName);
 	    
 	    Element paramValue = doc.createElement("param-value");
-	    paramValue.setTextContent("classpath*:*/minytock/ui/minytock-servlet.xml");
+	    paramValue.setTextContent("classpath:/minytock/ui/minytock-servlet.xml");
 	    initParam.appendChild(paramValue);
 	    
 	    Element servletMapping = doc.createElement("servlet-mapping");
@@ -255,8 +259,31 @@ public class MinytockMojo extends AbstractMojo {
 	    servletUrlPattern.setTextContent("/minytock/*");
 	    servletMapping.appendChild(servletUrlPattern);
     
-	    webApp.appendChild(servlet);
+	    
+	    webApp.insertBefore(servletMapping, webApp.getElementsByTagName("servlet").item(0));
+	    webApp.insertBefore(servlet, servletMapping);
 		
+	}
+	
+	protected void placeJSPs(String webAppDir) throws Exception {
+		
+		InputStream is = null;
+		OutputStream os = null;
+		
+		File destinationDir = new File(webAppDir + "/WEB-INF/minytock");
+		destinationDir.mkdir();
+		
+		try {
+			//this approach requires the ui jar on the plugin's classpath
+			is = this.getClass().getClassLoader().getResourceAsStream("/WEB-INF/minytock/dashboard.jsp");
+			os = new FileOutputStream(new File(webAppDir + "/WEB-INF/minytock/dashboard.jsp"));
+			IOUtils.copy(is, os);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			IOUtils.closeQuietly(is);
+			IOUtils.closeQuietly(os);
+		}
 	}
 	
 }
