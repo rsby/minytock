@@ -41,21 +41,21 @@ public class DelegationPostProcessor implements BeanPostProcessor {
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
     	
-    	LOG.info("Minytock checking [" + beanName +  "] for delegation");
+    	LOG.debug("Minytock checking [" + beanName +  "] for delegation");
     	
     	Class<?> targetClass = this.getTargetClass(bean);
-    	
-    	if (Modifier.isFinal(targetClass.getModifiers())) {
-    		LOG.info("Minytock skipping [" + beanName +  "] as not eligible for delegation because its class is final and cannot be proxied");
-    		return bean;
-    	}
     	
     	boolean doProxy = PatternMatchUtils.simpleMatch(includeFilters, targetClass.getName()) && !PatternMatchUtils.simpleMatch(excludeFilters, targetClass.getName());
         
         if (!doProxy) {
-        	LOG.info("Minytock skipping [" + beanName + "] as not eligible for delegation");
+        	LOG.debug("Minytock skipping [" + beanName + "] as not eligible for delegation");
         	return bean;
         }
+        
+        if (Modifier.isFinal(targetClass.getModifiers())) {
+    		LOG.warn("Minytock skipping [" + beanName +  "] as not eligible for delegation because its class is final and cannot be proxied");
+    		return bean;
+    	}
         
         try {
 
