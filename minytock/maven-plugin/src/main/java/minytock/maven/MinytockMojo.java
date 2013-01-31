@@ -7,14 +7,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -28,10 +20,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * 
@@ -135,14 +123,15 @@ public class MinytockMojo extends AbstractMojo {
 		if ("ear".equals(appType)) {
 			if (this.bundleFileNames != null && this.bundleFileNames.length > 0) {
 				for (String bundleFileName : this.bundleFileNames) {
-					this.modifyDeploymentDescriptor(new File(baseDir + "/" + bundleFileName + "/WEB-INF/web.xml"));
+					String webAppDir = baseDir + "/" + bundleFileName;
+					WebXmlModifier.build(webAppDir).execute();
 					this.placeJSPs(baseDir + "/" + bundleFileName);
 				}
 			} else {
 				throw new MinytockMojoException("for projects of type [ear], at least one bundleFileName must be specified in the minytock plugin configuration", new NullPointerException());
 			}
 		} else {
-			this.modifyDeploymentDescriptor(new File(baseDir + "/WEB-INF/web.xml"));
+			WebXmlModifier.build(baseDir).execute();
 			this.placeJSPs(baseDir);
 		}
 		
@@ -183,85 +172,6 @@ public class MinytockMojo extends AbstractMojo {
 			IOUtils.closeQuietly(fis);
 			IOUtils.closeQuietly(fos);
 		}
-		
-	}
-	
-	protected void modifyDeploymentDescriptor(File webXml) throws TransformerFactoryConfigurationError, Exception {
-		
-		this.getLog().info("editing the web.xml at " + webXml.getPath());
-		
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        Document doc = builder.parse(webXml);
-        
-        NodeList contextParamNodes = doc.getElementsByTagName("context-param");
-        for (int i = 0; i < contextParamNodes.getLength(); i++) {
-        	Node contextParam = contextParamNodes.item(i);
-        	NodeList paramChildren = contextParam.getChildNodes();
-        	for (int ii = 0; ii < paramChildren.getLength(); ii++) {
-        		Node paramChild = paramChildren.item(ii);
-        		if ("param-name".equals(paramChild.getNodeName()) && "contextConfigLocation".equals(paramChild.getTextContent())) {
-        			Node paramValue = paramChildren.item(ii + 2);
-        			paramValue.setTextContent(paramValue.getTextContent() + ", classpath:/context/minytock-context.xml");
-        			break;
-        		}
-        	}
-        }
-        
-        Element webApp = (Element) doc.getElementsByTagName("web-app").item(0);
-       
-        this.addServlet(doc, webApp);
-        
-        
-		Transformer transformer = TransformerFactory.newInstance().newTransformer();
-		DOMSource source = new DOMSource(doc);
-		FileOutputStream os = null;
-		try {
-			os = new FileOutputStream(webXml);
-			StreamResult result = new StreamResult(os);
-			transformer.transform(source, result); 
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			IOUtils.closeQuietly(os);
-		}
-	}
-	
-	protected void addServlet(Document doc, Element webApp) {
-	
-		Element servlet = doc.createElement("servlet");
-	    
-	    Element servletName = doc.createElement("servlet-name");
-	    servletName.setTextContent("minytock");
-	    servlet.appendChild(servletName);
-	    
-	    Element servletClass = doc.createElement("servlet-class");
-	    servletClass.setTextContent("org.springframework.web.servlet.DispatcherServlet");
-	    servlet.appendChild(servletClass);
-	    
-	    Element initParam = doc.createElement("init-param");
-	    servlet.appendChild(initParam);
-	    
-	    Element paramName = doc.createElement("param-name");
-	    paramName.setTextContent("contextConfigLocation");
-	    initParam.appendChild(paramName);
-	    
-	    Element paramValue = doc.createElement("param-value");
-	    paramValue.setTextContent("classpath:/minytock/ui/minytock-servlet.xml");
-	    initParam.appendChild(paramValue);
-	    
-	    Element servletMapping = doc.createElement("servlet-mapping");
-	    
-	    Element servletNameRef = doc.createElement("servlet-name");
-	    servletNameRef.setTextContent("minytock");
-	    servletMapping.appendChild(servletNameRef);
-	    
-	    Element servletUrlPattern = doc.createElement("url-pattern");
-	    servletUrlPattern.setTextContent("/minytock/*");
-	    servletMapping.appendChild(servletUrlPattern);
-    
-	    
-	    webApp.insertBefore(servletMapping, webApp.getElementsByTagName("servlet").item(0));
-	    webApp.insertBefore(servlet, servletMapping);
 		
 	}
 	
