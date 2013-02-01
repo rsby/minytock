@@ -1,7 +1,9 @@
 package minytock.spring;
 
 import java.lang.reflect.Modifier;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import minytock.Minytock;
 import minytock.delegate.DelegationException;
@@ -21,10 +23,12 @@ import org.springframework.util.PatternMatchUtils;
  * <p/>
  * DelegationPostProcessor
  */
-public class DelegationPostProcessor implements BeanPostProcessor {
+public class DelegationPostProcessor implements BeanPostProcessor, SpringDelegationRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(DelegationPostProcessor.class);
 
+    private Set<String> beanNames = new HashSet<String>();
+    
     private String[] includeFilters;
     private String[] excludeFilters;
     
@@ -60,6 +64,7 @@ public class DelegationPostProcessor implements BeanPostProcessor {
         try {
 
         	LOG.info("Minytock preparing [" + beanName +  "] for delegation");
+        	beanNames.add(beanName);
             return this.prepare(bean, targetClass);
  
         } catch (Exception e) {
@@ -77,5 +82,10 @@ public class DelegationPostProcessor implements BeanPostProcessor {
     protected Object prepare(Object bean, Class<?> targetClass) throws DelegationException {
     	return Minytock.provider.getHandler(bean, targetClass, false).getProxy();
     }
+
+	@Override
+	public Set<String> getBeanNames() {
+		return beanNames;
+	}
     
 }

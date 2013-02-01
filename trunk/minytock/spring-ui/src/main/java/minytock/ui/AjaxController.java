@@ -1,11 +1,14 @@
 package minytock.ui;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import minytock.Minytock;
+import minytock.spring.SpringDelegationRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
@@ -18,23 +21,26 @@ public class AjaxController implements ApplicationContextAware {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(AjaxController.class);
 	
+	@Autowired
+	private SpringDelegationRegistry registry;
 	private ApplicationContext applicationContext;
 	
 	@ResponseBody
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.GET}, value = "eligibleBeans")
-	public List<BeanInfo> eligibleBeans(String className) throws Exception {
+	public List<BeanInfo> eligibleBeans() throws Exception {
 		
-		LOG.info("Retreiving eligible beans...");
+		List<BeanInfo> infos = new ArrayList<BeanInfo>();
 		
 		try {
-			Map<String, ?> beans = applicationContext.getParent().getBeansOfType(Class.forName(className));
-			LOG.info("Bean found:  " + beans.size());
-			return BeanInfo.forBeans(beans);
+			for (String beanName : registry.getBeanNames()) {
+				Object bean = applicationContext.getParent().getBean(beanName);
+				infos.add(new BeanInfo(beanName, Minytock.real(bean)));
+			}
+			return infos;
 		} catch (Exception e) {
 			LOG.error("Error!", e);
 			throw e;
 		}
-		
 		
 	}
 
