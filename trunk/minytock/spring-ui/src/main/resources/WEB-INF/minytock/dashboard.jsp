@@ -32,7 +32,11 @@
 				<h1>dashboard</h1>
 			</div>
 			
-			<button class="btn btn-success">delegate</button>
+			<select id="beanNameDropdown"></select>
+			
+			<hr class="bs-docs-separator">
+			
+			<button id="delegateButton" class="btn btn-success">delegate</button>
 			
 			<hr class="bs-docs-separator">
 			
@@ -54,6 +58,27 @@
 		    
 		    $(window).resize(function(){
 		        $("#codeDiv").width($("#codeDivContainer").width());
+		    });
+		    
+		    
+		    var $beanNameDropdown = $('#beanNameDropdown');
+		    $.ajax({
+		        type: "GET",
+		        url: "${pageContext.request.contextPath}/minytock/eligibleBeans",
+		        dataType: "json",
+		        success: function(beanInfos) {
+		            $.each(beanInfos, function(){
+		                $beanNameDropdown.append($('<option></option>').val(this.name).html(this.name));	 
+		            })
+		        }
+		    });
+		    
+		    $('#delegateButton').click(function() {
+		    	$.ajax({
+			        type: "POST",
+			        data: {beanName : $beanNameDropdown.val(), methodCode : encodeURIComponent(editor.getSession().getValue())},
+			        url: "${pageContext.request.contextPath}/minytock/delegate.html"
+			    });
 		    });
 		    
 		</script>

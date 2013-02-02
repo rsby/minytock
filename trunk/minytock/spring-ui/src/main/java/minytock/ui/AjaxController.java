@@ -1,7 +1,17 @@
 package minytock.ui;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import javassist.CannotCompileException;
+import javassist.ClassClassPath;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtNewMethod;
+import javassist.LoaderClassPath;
+import javassist.NotFoundException;
 
 import minytock.Minytock;
 import minytock.spring.SpringDelegationRegistry;
@@ -42,6 +52,28 @@ public class AjaxController implements ApplicationContextAware {
 			throw e;
 		}
 		
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "delegate.html")
+	public void delegate(String beanName, String methodCode) throws CannotCompileException, InstantiationException, IllegalAccessException, UnsupportedEncodingException, ClassNotFoundException {
+		String decodedMethodCode = URLDecoder.decode(methodCode, "UTF-8");
+		 ClassPool pool = ClassPool.getDefault();
+		 pool.appendClassPath(new LoaderClassPath(this.getClass().getClassLoader()));
+		 String delegateclassName = beanName + "MinytockDelegate";
+		 CtClass delegateClass;
+		try {
+			delegateClass = pool.get(delegateclassName);
+		} catch (NotFoundException e) {
+			delegateClass = pool.makeClass(delegateclassName);
+		}
+		 try {
+			delegateClass.addMethod(CtNewMethod.make(decodedMethodCode, delegateClass));
+		} catch (CannotCompileException e) {
+			
+		}
+		 Class<?> clazz = delegateClass.toClass();
+		 Object delegate = clazz.newInstance();
+		 Minytock.delegate(applicationContext.getBean(beanName)).to(delegate);
 	}
 
 	@Override
