@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javassist.CannotCompileException;
-import javassist.ClassClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtNewMethod;
@@ -15,8 +14,6 @@ import javassist.NotFoundException;
 
 import minytock.Minytock;
 import minytock.spring.SpringDelegationRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -29,8 +26,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class AjaxController implements ApplicationContextAware {
 	
-	private static final Logger LOG = LoggerFactory.getLogger(AjaxController.class);
-	
 	@Autowired
 	private SpringDelegationRegistry registry;
 	private ApplicationContext applicationContext;
@@ -41,16 +36,16 @@ public class AjaxController implements ApplicationContextAware {
 		
 		List<BeanInfo> infos = new ArrayList<BeanInfo>();
 		
-		try {
-			for (String beanName : registry.getBeanNames()) {
+		for (String beanName : registry.getBeanNames()) {
+			try {
 				Object bean = applicationContext.getParent().getBean(beanName);
 				infos.add(new BeanInfo(beanName, Minytock.real(bean)));
+			} catch (Exception e) {
+				//blah
 			}
-			return infos;
-		} catch (Exception e) {
-			LOG.error("Error!", e);
-			throw e;
+			
 		}
+		return infos;
 		
 	}
 	
