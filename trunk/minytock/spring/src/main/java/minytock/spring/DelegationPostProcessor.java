@@ -1,9 +1,9 @@
 package minytock.spring;
 
 import java.lang.reflect.Modifier;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import minytock.Minytock;
 import minytock.delegate.DelegationException;
@@ -27,7 +27,7 @@ public class DelegationPostProcessor implements BeanPostProcessor, SpringDelegat
 
     private static final Logger LOG = LoggerFactory.getLogger(DelegationPostProcessor.class);
 
-    private Set<String> beanNames = new HashSet<String>();
+    private SortedSet<String> beanNames = new TreeSet<String>();
     
     private String[] includeFilters;
     private String[] excludeFilters;
@@ -64,8 +64,9 @@ public class DelegationPostProcessor implements BeanPostProcessor, SpringDelegat
         try {
 
         	LOG.info("Minytock preparing [" + beanName +  "] for delegation");
+        	Object proxy = this.prepare(bean, targetClass); 
         	beanNames.add(beanName);
-            return this.prepare(bean, targetClass);
+            return proxy;
  
         } catch (Exception e) {
         	
@@ -84,7 +85,7 @@ public class DelegationPostProcessor implements BeanPostProcessor, SpringDelegat
     }
 
 	@Override
-	public Set<String> getBeanNames() {
+	public SortedSet<String> getBeanNames() {
 		return beanNames;
 	}
     

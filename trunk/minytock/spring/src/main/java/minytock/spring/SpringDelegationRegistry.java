@@ -1,9 +1,9 @@
 package minytock.spring;
 
-import java.util.Set;
+import java.util.SortedSet;
 
 public interface SpringDelegationRegistry {
 	
-	Set<String> getBeanNames();
+	SortedSet<String> getBeanNames();
 
 }
