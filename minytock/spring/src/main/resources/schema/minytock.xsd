@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns="http://code.google.com/p/minytock/schema/spring"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:beans="http://www.springframework.org/schema/beans"
             xmlns:tool="http://www.springframework.org/schema/tool"
             targetNamespace="http://code.google.com/p/minytock/schema/spring"
             elementFormDefault="qualified"
             attributeFormDefault="unqualified">
             
-    <xsd:import namespace="http://www.springframework.org/schema/tool"/>
-
+    <xsd:import namespace="http://www.springframework.org/schema/beans"/>
+	<xsd:import namespace="http://www.springframework.org/schema/tool"/>
+	
     <xsd:annotation>
         <xsd:documentation><![CDATA[
 	Defines a Minytock namespace for use in Spring context files.
@@ -58,15 +60,27 @@ Controls which eligible types to exclude for minytock delegation preparation.
 		            </xsd:complexContent>
 		        </xsd:complexType>
 			</xsd:element>
-        	<xsd:element name="auto-mock" minOccurs="0" maxOccurs="unbounded">
+        	<xsd:element name="type-mock" minOccurs="0" maxOccurs="unbounded">
         		<xsd:annotation>
 		           <xsd:documentation>
-		               Used to indicate that a type should be automatically mocked with an "empty mock"
+		               Used to indicate that all beans of the indicated type should be automatically mocked
 		           </xsd:documentation>
 		       </xsd:annotation>
         		<xsd:complexType>
 		            <xsd:complexContent>
-		                <xsd:extension base="mock-type"/>
+		                <xsd:extension base="type-mock-type"/>
+		            </xsd:complexContent>
+		        </xsd:complexType>
+        	</xsd:element>
+        	<xsd:element name="targeted-mock" minOccurs="0" maxOccurs="unbounded">
+        		<xsd:annotation>
+		           <xsd:documentation>
+		               Used to indicate a specific bean should be mocked
+		           </xsd:documentation>
+		       </xsd:annotation>
+        		<xsd:complexType>
+		            <xsd:complexContent>
+		                <xsd:extension base="targeted-mock-type"/>
 		            </xsd:complexContent>
 		        </xsd:complexType>
         	</xsd:element>
@@ -88,7 +102,7 @@ Controls which eligible types to exclude for minytock delegation preparation.
         </xsd:attribute>
     </xsd:complexType>
     
-    <xsd:complexType name="mock-type">
+    <xsd:complexType name="type-mock-type">
     	<xsd:attribute name="type" type="xsd:string" use="required">
            <xsd:annotation>
                <xsd:documentation source="java:java.lang.Class">
@@ -96,6 +110,45 @@ Controls which eligible types to exclude for minytock delegation preparation.
                </xsd:documentation>
            </xsd:annotation>
        </xsd:attribute>
+       <xsd:attribute name="mock-ref" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>
+					A reference to a mock implementation that will be delegated to
+				</xsd:documentation>
+				<xsd:appinfo>
+					<tool:annotation kind="ref">
+						<tool:expected-type type="java.lang.Object" />
+					</tool:annotation>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+    </xsd:complexType>
+    
+    <xsd:complexType name="targeted-mock-type">
+       <xsd:attribute name="target-ref" type="xsd:string" use="required">
+			<xsd:annotation>
+				<xsd:documentation>
+					A reference to a real bean that will be targeted for mocking
+				</xsd:documentation>
+				<xsd:appinfo>
+					<tool:annotation kind="ref">
+						<tool:expected-type type="java.lang.Object" />
+					</tool:annotation>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+       <xsd:attribute name="mock-ref" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>
+					A reference to a mock implementation that will be delegated to
+				</xsd:documentation>
+				<xsd:appinfo>
+					<tool:annotation kind="ref">
+						<tool:expected-type type="java.lang.Object" />
+					</tool:annotation>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
     </xsd:complexType>
     
     <xsd:complexType name="filter-type">

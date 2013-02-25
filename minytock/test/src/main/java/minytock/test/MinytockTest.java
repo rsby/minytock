@@ -2,8 +2,8 @@ package minytock.test;
 
 import minytock.Minytock;
 import minytock.delegate.DelegationException;
-import minytock.test.EmptyMockFactory;
 import minytock.test.Verifiable;
+import minytock.util.EmptyMockFactory;
 
 /**
  * A sort of "static interface" to the MinytockIntegrationTest delegation framework that can be imported into test classes

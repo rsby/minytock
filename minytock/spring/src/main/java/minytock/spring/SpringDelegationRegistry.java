@@ -5,5 +5,6 @@ import java.util.SortedSet;
 public interface SpringDelegationRegistry {
 	
 	SortedSet<String> getBeanNames();
-
+	SortedSet<String> getDelegateNames();
+	
 }
