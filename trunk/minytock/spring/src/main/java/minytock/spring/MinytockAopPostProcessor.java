@@ -36,13 +36,13 @@ public class MinytockAopPostProcessor extends DelegationPostProcessor {
         //simply swap if bean is hot-swappable
         if (bean instanceof HotSwappableTargetSource ) {
         	
-        	LOG.info("Bean instance of HotSwappableTargetSource, setting Minytock proxy as the AOP proxy target.");
+        	LOG.debug("Bean instance of HotSwappableTargetSource, setting Minytock proxy as the AOP proxy target.");
         	((HotSwappableTargetSource) bean).swap(minytockProxy);
         	return bean;
         	
         } else {
         	
-        	LOG.info("Bean not an instance of HotSwappableTargetSource, returning the Minytock proxy as the bean.");
+        	LOG.debug("Bean not an instance of HotSwappableTargetSource, returning the Minytock proxy as the bean.");
         	return minytockProxy;
         	
         }

@@ -74,17 +74,35 @@ public class MinytockSpringConfigParser implements BeanDefinitionParser {
 						.getBeanDefinition(), "minytockPostProcessor"));
 		
 		//parse the auto-mock elements and register an MinytockFactoryPostProcessor with the list of auto-mock types
-		List<Element> autoMockElements = DomUtils.getChildElementsByTagName(element, "auto-mock");
-		List<String> autoMockTypes = new ArrayList<String>();
-		for (Element autoMockElement : autoMockElements) {
+		List<MockConfigHandler> mockConfigHandlers = new ArrayList<MockConfigHandler>();
+		
+		List<Element> typeMockElements = DomUtils.getChildElementsByTagName(element, "type-mock");
+		for (Element autoMockElement : typeMockElements) {
 			String type = StringUtils.trimAllWhitespace(autoMockElement.getAttribute("type"));
-			autoMockTypes.add(type);
+			String mockRef = StringUtils.trimAllWhitespace(autoMockElement.getAttribute("mock-ref"));
+			if (mockRef != null) {
+				mockConfigHandlers.add(new TypeRefMockConfigHandler(type, mockRef));
+			} else {
+				mockConfigHandlers.add(new TypeEmptyMockConfigHandler(type));
+			}
 		}
+		
+		List<Element> targetedMockElements = DomUtils.getChildElementsByTagName(element, "targeted-mock");
+		for (Element autoMockElement : targetedMockElements) {
+			String targetRef = StringUtils.trimAllWhitespace(autoMockElement.getAttribute("target-ref"));
+			String mockRef = StringUtils.trimAllWhitespace(autoMockElement.getAttribute("mock-ref"));
+			if (mockRef != null) {
+				mockConfigHandlers.add(new TargetedRefMockConfigHandler(targetRef, mockRef));
+			} else {
+				mockConfigHandlers.add(new TargetedEmptyMockConfigHandler(targetRef));
+			}
+		}
+		
 		parserContext.registerBeanComponent(
 				new BeanComponentDefinition(
 						BeanDefinitionBuilder
 						.genericBeanDefinition(MinytockFactoryPostProcessor.class)
-						.addConstructorArgValue(autoMockTypes)
+						.addConstructorArgValue(mockConfigHandlers)
 						.getBeanDefinition(), "minytockEmptyMockFactory"));
 						
 		return null;

@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.PatternMatchUtils;
 
 /**
@@ -28,6 +29,7 @@ public class DelegationPostProcessor implements BeanPostProcessor, SpringDelegat
     private static final Logger LOG = LoggerFactory.getLogger(DelegationPostProcessor.class);
 
     private SortedSet<String> beanNames = new TreeSet<String>();
+    private SortedSet<String> delegateNames = new TreeSet<String>();
     
     private String[] includeFilters;
     private String[] excludeFilters;
@@ -39,6 +41,9 @@ public class DelegationPostProcessor implements BeanPostProcessor, SpringDelegat
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+    	if (AnnotationUtils.findAnnotation(bean.getClass(), MinytockDelegate.class) != null) {
+    		delegateNames.add(beanName);
+    	}
     	return bean;
     }
 
@@ -87,6 +92,11 @@ public class DelegationPostProcessor implements BeanPostProcessor, SpringDelegat
 	@Override
 	public SortedSet<String> getBeanNames() {
 		return beanNames;
+	}
+
+	@Override
+	public SortedSet<String> getDelegateNames() {
+		return delegateNames;
 	}
     
 }
